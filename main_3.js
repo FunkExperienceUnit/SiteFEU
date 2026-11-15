@@ -24,7 +24,7 @@ if (list) {
                 htmlContent += `<a href="${ev.lylo}" target="_blank" rel="noopener noreferrer" aria-label="Lylo"><img src="img/Logo/lylo.png" alt="Lylo" class="event-partner-logo"></a>`;
             }
             if (ev.infoconcert) {
-                htmlContent += `<a href="${ev.infoconcert}" target="_blank" rel="noopener noreferrer" aria-label="Info Concert"><img src="img/Logo/infoconcert.png" alt="Info Concert" class="event-partner-logo"></a>`;
+                htmlContent += `<a href="${ev.infoconcert}" target="_blank" rel="noopener noreferrer" aria-label="Info Concert"><img src="img/Logo/infoConcert.png" alt="Info Concert" class="event-partner-logo"></a>`;
             }
             htmlContent += `</div>`;
         }
