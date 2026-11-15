@@ -6,8 +6,8 @@
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <link href="https://fonts.googleapis.com/css2?family=Montserrat:wght@400;700&display=swap" rel="stylesheet">
   <link rel="stylesheet" href="https://cdnjs.cloudflare.com/ajax/libs/font-awesome/6.5.1/css/all.min.css">
-  <!-- Respect de la majuscule sur Style2.css pour GitHub (Linux) -->
-  <link rel="stylesheet" href="Style2.css">
+  <!-- Avant chaque push bien incrémenter le 1.x en 1. quelque chose d'autre'-->
+  <link rel="stylesheet" href="Style2.css?v=1.1">
   <link href="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/css/lightbox.min.css" rel="stylesheet">
 </head>
 <body>
@@ -118,10 +118,10 @@
         <p>&copy; 2027 Funk Experience Unit</p>
     </footer>
 
-    <!-- D'abord les données -->
-    <script src="galerie-data.js" charset="utf-8"></script>
-    <!-- Ensuite votre script principal -->
-    <script src="main_3.js" charset="utf-8"></script>
+    <!-- Script js avec on force le cache à actualiser. -->
+
+    <script src="galerie-data.js?v=1.1" charset="utf-8"></script>
+    <script src="main_3.js?v=1.1" charset="utf-8"></script>
     <!-- Version de Lightbox incluant jQuery (indispensable pour les flèches) -->
     <script src="https://cdnjs.cloudflare.com/ajax/libs/lightbox2/2.11.3/js/lightbox-plus-jquery.min.js"></script>
 </body>
