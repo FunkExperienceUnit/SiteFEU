@@ -1,258 +1,140 @@
-body {
-  margin: 0;
-  font-family: 'Montserrat', sans-serif;
-  background-color: #0b0b10; /* Fond sombre profond et moderne */
-  color: #f0f0f5;
-}
-
-.hero {
-  background: url('img/hero.jpg') center/cover no-repeat;
-  height: 60vh;
-  position: relative;
-  text-align: center;
-  color: white;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-}
-
-.hero .overlay {
-  position: absolute;
-  top: 0; left: 0;
-  width: 100%; height: 100%;
-  /* Dégradé subtil pour une touche funky et pro */
-  background: linear-gradient(135deg, rgba(11, 11, 16, 0.85) 0%, rgba(255, 94, 98, 0.3) 100%);
-}
-
-.hero h1 {
-  font-size: 3rem;
-  /* Effet de texte doré/chaleureux très pro */
-  background: linear-gradient(135deg, #ffffff 30%, #ffd166 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  text-shadow: 0 4px 20px rgba(0, 0, 0, 0.5);
-  z-index: 1;
-  font-weight: 700;
-  letter-spacing: 1px;
-}
-
-.sticky-nav {
-  position: sticky;
-  top: 0;
-  background: rgba(18, 18, 26, 0.95);
-  backdrop-filter: blur(10px);
-  display: flex;
-  justify-content: center;
-  gap: 20px;
-  padding: 12px;
-  z-index: 1000;
-  border-bottom: 1px solid rgba(255, 209, 102, 0.2);
-}
-
-.sticky-nav a {
-  color: #d1d1e0;
-  text-decoration: none;
-  font-weight: 600;
-  transition: color 0.3s, text-shadow 0.3s;
-}
-
-.sticky-nav a:hover {
-  color: #ffd166;
-  text-shadow: 0 0 10px rgba(255, 209, 102, 0.5);
-}
-
-.section {
-  padding: 50px 20px;
-  max-width: 1000px;
-  margin: auto;
-}
-
-h2 {
-  text-align: center;
-  margin-bottom: 35px;
-  font-size: 2.2em;
-  /* Titres de section avec une touche vibrante */
-  background: linear-gradient(135deg, #ffffff 40%, #ff5e62 100%);
-  -webkit-background-clip: text;
-  -webkit-text-fill-color: transparent;
-  letter-spacing: 0.5px;
-}
-
-.grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
-  gap: 20px;
-}
-
-.card {
-  background: #161622;
-  padding: 15px;
-  border-radius: 12px;
-  text-align: center;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
-}
-
-.card:hover {
-  transform: translateY(-5px);
-  border-color: rgba(255, 209, 102, 0.4);
-  box-shadow: 0 10px 25px rgba(255, 94, 98, 0.2);
-}
-
-.card img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 8px;
-}
-
-.card h3 {
-  margin: 12px 0 5px 0;
-  color: #ffffff;
-}
-
-.card p {
-  color: #a0a0b2;
-  font-size: 0.9rem;
-}
-
-.gallery img {
-  width: 100%;
-  height: 200px;
-  object-fit: cover;
-  border-radius: 10px;
-  margin-bottom: 10px;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  transition: transform 0.3s ease, box-shadow 0.3s ease;
-}
-
-.gallery img:hover {
-  transform: scale(1.03);
-  box-shadow: 0 0 20px rgba(255, 209, 102, 0.3);
-}
-
-video {
-  width: 100%;
-  max-width: 800px;
-  border-radius: 10px;
-  box-shadow: 0 10px 30px rgba(0, 0, 0, 0.5);
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  display: block;
-  margin: auto;
-}
-
-form input, form textarea {
-  width: 100%;
-  margin-bottom: 12px;
-  padding: 12px;
-  background: #161622;
-  border: 1px solid rgba(255, 255, 255, 0.1);
-  color: white;
-  border-radius: 8px;
-  transition: border-color 0.3s ease;
-}
-
-form input:focus, form textarea:focus {
-  outline: none;
-  border-color: #ffd166;
-}
-
-form textarea {
-  resize: vertical; /* Empêche l'étirement horizontal, autorise uniquement vertical */
-}
-
-button {
-  /* Bouton avec dégradé punchy style concert live */
-  background: linear-gradient(135deg, #ff5e62 0%, #ff9966 100%);
-  color: white;
-  border: none;
-  padding: 12px 25px;
-  border-radius: 8px;
-  cursor: pointer;
-  font-weight: bold;
-  font-size: 1rem;
-  box-shadow: 0 4px 15px rgba(255, 94, 98, 0.4);
-  transition: transform 0.2s ease, box-shadow 0.2s ease;
-}
-
-button:hover {
-  transform: translateY(-2px);
-  box-shadow: 0 6px 20px rgba(255, 94, 98, 0.6);
-}
-
-footer {
-  text-align: center;
-  padding: 25px;
-  background: #12121a;
-  color: #8888a0;
-  border-top: 1px solid rgba(255, 255, 255, 0.05);
-}
-
-/* Style de la liste des événements */
-#event-list {
-  list-style: none;
-  padding: 0;
-  max-width: 600px;
-  margin: 0 auto;
-}
-
-#event-list li {
-  background: #161622;
-  padding: 15px 20px;
-  margin-bottom: 15px;
-  border-radius: 8px;
-  border-left: 4px solid #ffd166; /* Touche dorée élégante */
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+@font-face {
+    font-family: 'Fortuna Dot';
+    src: url('fonts/fortd.ttf') format('truetype');
+    font-weight: normal;
+    font-style: normal;
 }
 
 /* Empêche les champs de formulaire de dépasser sur smartphone */
 * {
-  box-sizing: border-box;
+    box-sizing: border-box;
 }
 
-/* Style des icônes réseaux sociaux */
-.social {
-  display: flex;
-  justify-content: center;
-  gap: 25px;
-  margin-top: 30px;
+body {
+    margin: 0;
+    font-family: 'Montserrat', sans-serif;
+    background-color: #0b0b10; /* Fond sombre profond et moderne */
+    color: #f0f0f5;
 }
 
-.social a {
-  color: #d1d1e0;
-  font-size: 2.2rem; /* Taille idéale pour cliquer au doigt sur smartphone */
-  transition: transform 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;
-  display: inline-flex;
-  align-items: center;
-  justify-content: center;
-  text-decoration: none;
+/* --- Bannière Hero --- */
+.hero {
+    background: url('img/hero.jpg') center/cover no-repeat;
+    height: 60vh;
+    position: relative;
+    text-align: center;
+    color: white;
+    display: flex;
+    align-items: center;
+    justify-content: center;
 }
 
-/* Couleurs au survol avec effet lumineux (glow) */
-.social a[aria-label="Facebook"]:hover {
-  color: #1877F2;
-  transform: scale(1.15);
-  text-shadow: 0 0 15px rgba(24, 119, 242, 0.5);
+    .hero .overlay {
+        position: absolute;
+        top: 0;
+        left: 0;
+        width: 100%;
+        height: 100%;
+        background: linear-gradient(135deg, rgba(11, 11, 16, 0.85) 0%, rgba(255, 94, 98, 0.3) 100%);
+    }
+
+    .hero h1 {
+        font-family: 'Fortuna Dot', sans-serif;
+        font-size: 3.5rem;
+        font-weight: normal;
+        color: #ffd166;
+        text-shadow: 0 4px 20px rgba(0, 0, 0, 0.8);
+        z-index: 1;
+        letter-spacing: 2px;
+    }
+
+/* --- Navigation Sticky --- */
+.sticky-nav {
+    font-family: 'Fortuna Dot', sans-serif;
+    position: sticky;
+    top: 0;
+    background: rgba(18, 18, 26, 0.95);
+    backdrop-filter: blur(10px);
+    display: flex;
+    justify-content: center;
+    gap: 20px;
+    padding: 12px;
+    z-index: 1000;
+    border-bottom: 1px solid rgba(255, 209, 102, 0.2);
 }
 
-.social a[aria-label="Instagram"]:hover {
-  color: #E4405F;
-  transform: scale(1.15);
-  text-shadow: 0 0 15px rgba(228, 64, 95, 0.5);
+    .sticky-nav a {
+        color: #d1d1e0;
+        text-decoration: none;
+        font-weight: 600;
+        transition: color 0.3s, text-shadow 0.3s;
+    }
+
+        .sticky-nav a:hover {
+            color: #ffd166;
+            text-shadow: 0 0 10px rgba(255, 209, 102, 0.5);
+        }
+
+/* --- Sections & Titres --- */
+.section {
+    padding: 50px 20px;
+    max-width: 1000px;
+    margin: auto;
 }
 
-.social a[aria-label="Youtube"]:hover {
-  color: #FF0000;
-  transform: scale(1.15);
-  text-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+h2 {
+    font-family: 'Fortuna Dot', sans-serif;
+    text-align: center;
+    margin-bottom: 35px;
+    font-size: 2.2em;
+    background: linear-gradient(135deg, #ffffff 40%, #ff5e62 100%);
+    -webkit-background-clip: text;
+    -webkit-text-fill-color: transparent;
+    letter-spacing: 0.5px;
 }
 
+/* --- Grille des Musiciens --- */
+.grid {
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(160px, 1fr));
+    gap: 20px;
+}
 
+.card {
+    font-family: 'Fortuna Dot', sans-serif;
+    background: #161622;
+    padding: 15px;
+    border-radius: 12px;
+    text-align: center;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
+}
 
-/* Album photo */
+    .card:hover {
+        transform: translateY(-5px);
+        border-color: rgba(255, 209, 102, 0.4);
+        box-shadow: 0 10px 25px rgba(255, 94, 98, 0.2);
+    }
 
-/* --- Style de la vue des Dossiers (Albums) --- */
+    .card img {
+        width: 100%;
+        height: 200px;
+        object-fit: cover;
+        border-radius: 8px;
+    }
+
+    .card h3 {
+        margin: 12px 0 5px 0;
+        color: #ffffff;
+    }
+
+    .card p {
+        color: #a0a0b2;
+        font-size: 0.9rem;
+    }
+
+/* --- Album photo : Vue des Dossiers --- */
 .albums-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(220px, 1fr));
@@ -293,7 +175,7 @@ footer {
     font-size: 0.85rem;
 }
 
-/* --- Bouton Retour --- */
+/* --- Bouton Retour aux dossiers --- */
 .back-btn {
     background: rgba(255, 255, 255, 0.1);
     color: white;
@@ -313,86 +195,289 @@ footer {
         background: rgba(255, 255, 255, 0.2);
     }
 
-/* --- Grille des photos à l'intérieur d'un dossier --- */
+/* --- Grille des photos améliorée (Design moderne) --- */
 .photos-grid {
     display: grid;
     grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
-    gap: 15px;
+    gap: 20px;
 }
 
-    .photos-grid img {
+    .photos-grid img.photo-thumb {
         width: 100%;
         height: 200px;
         object-fit: cover;
-        border-radius: 8px;
-        border: 1px solid rgba(255, 255, 255, 0.05);
-        transition: transform 0.3s ease, box-shadow 0.3s ease;
+        display: block;
+        border-radius: 12px;
+        background: #161622;
+        border: 1px solid rgba(255, 255, 255, 0.08);
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+        cursor: pointer;
+        transition: transform 0.3s ease, border-color 0.3s ease, box-shadow 0.3s ease;
     }
 
-        .photos-grid img:hover {
-            transform: scale(1.03);
-            box-shadow: 0 0 20px rgba(255, 209, 102, 0.3);
+        .photos-grid img.photo-thumb:hover {
+            transform: translateY(-5px);
+            border-color: rgba(255, 209, 102, 0.6); /* Bordure dorée lumineuse */
+            box-shadow: 0 10px 25px rgba(255, 94, 98, 0.3); /* Ombre colorée */
         }
 
+/* --- Visionneuse photo instantanée (Modale) --- */
+.custom-modal {
+    position: fixed;
+    top: 0;
+    left: 0;
+    width: 100%;
+    height: 100%;
+    background: rgba(0, 0, 0, 0.92);
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    z-index: 9999;
+    animation: fadeIn 0.15s ease;
+}
 
+.modal-content {
+    position: relative;
+    max-width: 90%;
+    max-height: 90vh;
+    text-align: center;
+}
 
+.modal-img {
+    max-width: 100%;
+    max-height: 80vh;
+    border-radius: 10px;
+    border: 1px solid rgba(255, 209, 102, 0.3);
+    box-shadow: 0 8px 35px rgba(0, 0, 0, 0.8);
+}
 
+.modal-close {
+    position: absolute;
+    top: -45px;
+    right: 0;
+    font-size: 2.5rem;
+    color: white;
+    cursor: pointer;
+    transition: color 0.2s;
+}
 
-/******  VIDEO****/ 
-/* --- Style de la grille de vidéos --- */
+    .modal-close:hover {
+        color: #ffd166;
+    }
+
+.modal-prev, .modal-next {
+    position: absolute;
+    top: 50%;
+    transform: translateY(-50%);
+    background: rgba(22, 22, 34, 0.85);
+    color: white;
+    border: 1px solid rgba(255, 209, 102, 0.4);
+    font-size: 1.4rem;
+    width: 48px;
+    height: 48px;
+    padding: 0;
+    display: flex;
+    align-items: center;
+    justify-content: center;
+    cursor: pointer;
+    border-radius: 50%;
+    box-shadow: 0 4px 15px rgba(0, 0, 0, 0.5);
+    transition: background 0.2s, color 0.2s, transform 0.2s;
+}
+
+    .modal-prev:hover, .modal-next:hover {
+        background: #ffd166;
+        color: #0b0b10;
+        transform: translateY(-50%) scale(1.08);
+    }
+
+.modal-prev {
+    left: -65px;
+}
+
+.modal-next {
+    right: -65px;
+}
+
+.modal-counter {
+    color: #d1d1e0;
+    margin-top: 12px;
+    font-size: 0.95rem;
+    letter-spacing: 0.5px;
+}
+
+@keyframes fadeIn {
+    from {
+        opacity: 0;
+    }
+
+    to {
+        opacity: 1;
+    }
+}
+
+/* --- Grille de Vidéos --- */
 .videos-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
-  gap: 25px;
+    display: grid;
+    grid-template-columns: repeat(auto-fit, minmax(280px, 1fr));
+    gap: 25px;
 }
 
 .video-card {
-  background: #161622;
-  border-radius: 12px;
-  overflow: hidden;
-  border: 1px solid rgba(255, 255, 255, 0.05);
-  box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
-  padding: 15px;
-  text-align: center;
+    background: #161622;
+    border-radius: 12px;
+    overflow: hidden;
+    border: 1px solid rgba(255, 255, 255, 0.05);
+    box-shadow: 0 8px 20px rgba(0, 0, 0, 0.3);
+    padding: 15px;
+    text-align: center;
 }
 
-.video-card iframe {
-  width: 100%;
-  height: 200px;
-  border: none;
-  border-radius: 8px;
-}
+    .video-card iframe {
+        width: 100%;
+        height: 200px;
+        border: none;
+        border-radius: 8px;
+    }
 
 .video-title {
-  margin: 12px 0 5px 0;
-  font-size: 1.1rem;
-  color: #ffffff;
+    margin: 12px 0 5px 0;
+    font-size: 1.1rem;
+    color: #ffffff;
 }
 
+/* --- Liste des Événements --- */
+#event-list {
+    list-style: none;
+    padding: 0;
+    max-width: 600px;
+    margin: 0 auto;
+}
 
+    #event-list li {
+        background: #161622;
+        padding: 15px 20px;
+        margin-bottom: 15px;
+        border-radius: 8px;
+        border-left: 4px solid #ffd166;
+        box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
+    }
 
-
-
-/* Ajustements spécifiques pour smartphones (écrans < 600px) */
-@media (max-width: 600px) {
-  .sticky-nav {
-    flex-wrap: wrap; /* Permet aux liens du menu de passer à la ligne sur petit écran */
-    gap: 10px 15px;
-    font-size: 0.9rem;
-  }
-
-  .hero {
-    height: 45vh; /* Réduit légèrement la bannière sur mobile */
-  }
-
-  .hero h1 {
-    font-size: 2rem;
-    padding: 0 15px;
-  }
-
-  button {
-    width: 100%; /* Bouton "Envoyer" pleine largeur, plus facile à toucher sur mobile */
+/* --- Formulaire de Contact --- */
+form input, form textarea {
+    width: 100%;
+    margin-bottom: 12px;
     padding: 12px;
+    background: #161622;
+    border: 1px solid rgba(255, 255, 255, 0.1);
+    color: white;
+    border-radius: 8px;
+    transition: border-color 0.3s ease;
+}
+
+    form input:focus, form textarea:focus {
+        outline: none;
+        border-color: #ffd166;
+    }
+
+form textarea {
+    resize: vertical;
+}
+
+form button {
+    background: linear-gradient(135deg, #ff5e62 0%, #ff9966 100%);
+    color: white;
+    border: none;
+    padding: 12px 25px;
+    border-radius: 8px;
+    cursor: pointer;
+    font-weight: bold;
     font-size: 1rem;
-  }
+    box-shadow: 0 4px 15px rgba(255, 94, 98, 0.4);
+    transition: transform 0.2s ease, box-shadow 0.2s ease;
+}
+
+    form button:hover {
+        transform: translateY(-2px);
+        box-shadow: 0 6px 20px rgba(255, 94, 98, 0.6);
+    }
+
+/* --- Réseaux Sociaux --- */
+.social {
+    display: flex;
+    justify-content: center;
+    gap: 25px;
+    margin-top: 30px;
+}
+
+    .social a {
+        color: #d1d1e0;
+        font-size: 2.2rem;
+        transition: transform 0.3s ease, color 0.3s ease, text-shadow 0.3s ease;
+        display: inline-flex;
+        align-items: center;
+        justify-content: center;
+        text-decoration: none;
+    }
+
+        .social a[aria-label="Facebook"]:hover {
+            color: #1877F2;
+            transform: scale(1.15);
+            text-shadow: 0 0 15px rgba(24, 119, 242, 0.5);
+        }
+
+        .social a[aria-label="Instagram"]:hover {
+            color: #E4405F;
+            transform: scale(1.15);
+            text-shadow: 0 0 15px rgba(228, 64, 95, 0.5);
+        }
+
+        .social a[aria-label="Youtube"]:hover {
+            color: #FF0000;
+            transform: scale(1.15);
+            text-shadow: 0 0 15px rgba(255, 0, 0, 0.5);
+        }
+
+/* --- Pied de page --- */
+footer {
+    text-align: center;
+    padding: 25px;
+    background: #12121a;
+    color: #8888a0;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+/* --- Ajustements spécifiques pour smartphones (écrans < 600px) --- */
+@media (max-width: 600px) {
+    .sticky-nav {
+        flex-wrap: wrap;
+        gap: 10px 15px;
+        font-size: 0.9rem;
+    }
+
+    .hero {
+        height: 45vh;
+    }
+
+        .hero h1 {
+            font-size: 2rem;
+            padding: 0 15px;
+        }
+
+    form button {
+        width: 100%;
+        padding: 12px;
+        font-size: 1rem;
+    }
+
+    /* Positionnement des flèches de la modale sur petit écran */
+    .modal-prev {
+        left: 10px;
+        background: rgba(11, 11, 16, 0.75);
+    }
+
+    .modal-next {
+        right: 10px;
+        background: rgba(11, 11, 16, 0.75);
+    }
 }
