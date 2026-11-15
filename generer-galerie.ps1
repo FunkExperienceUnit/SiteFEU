@@ -4,7 +4,7 @@
 # Définition des chemins
 $galerieDir = Join-Path $PSScriptRoot "img\galerie"
 $outputFile = Join-Path $PSScriptRoot "galerie-data.js"
-$extensions = @(".jpg", ".jpeg", ".png", ".jfif")
+$extensions = @(".jpg", ".jpeg", ".png", ".jfif", ".webp")
 
 if (-not (Test-Path $galerieDir)) {
     Write-Error "Le dossier $galerieDir est introuvable."
