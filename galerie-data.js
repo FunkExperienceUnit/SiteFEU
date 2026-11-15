@@ -1,4 +1,4 @@
-﻿// GÃ©nÃ©rÃ© automatiquement par PowerShell le 11/15/2026 19:56:26
+﻿// GÃ©nÃ©rÃ© automatiquement par PowerShell le 11/15/2026 23:14:38
 const galerieAlbums = [
     {
         "id":  "aufargis-2025",
@@ -27,6 +27,20 @@ const galerieAlbums = [
                        "IMG_9137.jpg",
                        "IMG_9150.jpg",
                        "joelle.jpg"
+                   ]
+    },
+    {
+        "id":  "evénements-passés",
+        "titre":  "Evénements passés",
+        "dossier":  "img/galerie/Evénements passés/",
+        "couverture":  "Affiche 21Juin26.jpeg",
+        "photos":  [
+                       "Affiche 21Juin26.jpeg",
+                       "Affiche La Treso.jpg",
+                       "funk-experience-unit-en-concert-a-paris-20e-1.jpeg",
+                       "images copie 2.jpeg",
+                       "images copie.jpeg",
+                       "Visuel A4 2106 2026.jpg"
                    ]
     },
     {

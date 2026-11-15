@@ -1,4 +1,42 @@
 const events = [
+    { 
+        date: "20-11-2026", 
+        lieu: "Paris 20ième – Chez Bistouille", 
+        desc: "Soirée Funk",
+        lylo: "https://www.lylo.fr/concert/524a05-funk-experience-unit-en-concert-a-paris-20e-lyf-gambetta",       // Mettez le lien Lylo ici (ou supprimez la ligne si aucun)
+        infoconcert: "https://www.infoconcert.com/concerts/concert-funk-experience-unit-paris-1975099" // Mettez le lien Info Concert ici (ou supprimez si aucun)
+    }
+    // Vous pouvez ajouter d'autres événements ici avec leurs propres liens distincts
+];
+
+const list = document.getElementById("event-list");
+if (list) {
+    events.forEach(ev => {
+        const li = document.createElement("li");
+        
+        // Construction du contenu de base de l'événement
+        let htmlContent = `<strong>${ev.date}</strong> – ${ev.lieu}<br><em>${ev.desc}</em>`;
+        
+        // Ajout dynamique des logos partenaires si les liens sont renseignés pour cet événement
+        if (ev.lylo || ev.infoconcert) {
+            htmlContent += `<div class="event-item-links">`;
+            if (ev.lylo) {
+                htmlContent += `<a href="${ev.lylo}" target="_blank" rel="noopener noreferrer" aria-label="Lylo"><img src="img/Logo/lylo.png" alt="Lylo" class="event-partner-logo"></a>`;
+            }
+            if (ev.infoconcert) {
+                htmlContent += `<a href="${ev.infoconcert}" target="_blank" rel="noopener noreferrer" aria-label="Info Concert"><img src="img/Logo/infoconcert.png" alt="Info Concert" class="event-partner-logo"></a>`;
+            }
+            htmlContent += `</div>`;
+        }
+        
+        li.innerHTML = htmlContent;
+        list.appendChild(li);
+    });
+}
+
+/*EVENEMENT CODE ANCIEN
+
+const events = [
     { date: "20-11-2026", lieu: "Paris 20ième – Bistouille", desc: "Soirée Funk" }
 ];
 
@@ -10,7 +48,7 @@ if (list) {
         list.appendChild(li);
     });
 }
-
+*/
 const videoContainer = document.getElementById("dynamic-videos");
 
 function afficherVideos() {

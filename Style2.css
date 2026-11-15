@@ -47,6 +47,26 @@ body {
         z-index: 1;
         letter-spacing: 2px;
     }
+	
+	/* --- Logo de la Hero --- */
+/* --- Logo de la Hero (Plus grand et lumineux) --- */
+.hero-logo {
+    max-width: 360px; /* Ajustez cette valeur pour l'agrandir ou le réduire (ex: 320px à 400px) */
+    max-height: 48vh;  /* Empêche le logo de dépasser de la hauteur de la bannière */
+    width: 100%;
+    height: auto;
+    border-radius: 50%;
+    border: 3px solid #ffd166;
+    background: #ffffff;
+    padding: 5px;
+    box-shadow: 0 12px 35px rgba(0, 0, 0, 0.8), 0 0 30px rgba(255, 209, 102, 0.5);
+    z-index: 1;
+    transition: transform 0.3s ease;
+}
+
+.hero-logo:hover {
+    transform: scale(1.03);
+}
 
 /* --- Navigation Sticky --- */
 .sticky-nav {
@@ -316,6 +336,8 @@ h2 {
     }
 }
 
+
+
 /* --- Grille de Vidéos --- */
 .videos-grid {
     display: grid;
@@ -347,6 +369,38 @@ h2 {
 }
 
 /* --- Liste des Événements --- */
+/* --- Logos partenaires intégrés par événement --- */
+.event-item-links {
+    display: flex;
+    gap: 12px;
+    margin-top: 12px;
+    align-items: center;
+    padding-top: 8px;
+    border-top: 1px solid rgba(255, 255, 255, 0.05);
+}
+
+.event-item-links a {
+    display: inline-flex;
+    align-items: center;
+    text-decoration: none;
+    transition: transform 0.3s ease;
+}
+
+.event-partner-logo {
+    height: 26px; /* Taille discrète et élégante intégrée dans la carte événement */
+    width: auto;
+    object-fit: contain;
+    border-radius: 4px;
+    filter: brightness(0.9);
+    transition: transform 0.3s ease, filter 0.3s ease, box-shadow 0.3s ease;
+}
+
+.event-item-links a:hover .event-partner-logo {
+    transform: scale(1.12);
+    filter: brightness(1) drop-shadow(0 0 8px rgba(255, 209, 102, 0.6));
+}
+
+
 #event-list {
     list-style: none;
     padding: 0;
@@ -362,6 +416,9 @@ h2 {
         border-left: 4px solid #ffd166;
         box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
     }
+
+
+
 
 /* --- Formulaire de Contact --- */
 form input, form textarea {
