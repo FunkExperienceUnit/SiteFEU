@@ -1,9 +1,9 @@
-﻿// GÃ©nÃ©rÃ© automatiquement par PowerShell le 11/15/2026 23:14:38
+﻿// GÃ©nÃ©rÃ© automatiquement par PowerShell le 11/17/2026 22:57:00
 const galerieAlbums = [
     {
-        "id":  "aufargis-2025",
-        "titre":  "Aufargis 2025",
-        "dossier":  "img/galerie/Aufargis 2025/",
+        "id":  "auffargis-2025",
+        "titre":  "Auffargis 2025",
+        "dossier":  "img/galerie/Auffargis 2025/",
         "couverture":  "Auf1.jpeg",
         "photos":  [
                        "Auf1.jpeg",
@@ -95,7 +95,7 @@ const galerieAlbums = [
 
 const youtubeVideos = [
   {
-    id: "ouwUcJG_Wgc",
+     id: "MwhbsUXIsfo",
     titre: "Stayin Alive COVER 2025"
     },
     {

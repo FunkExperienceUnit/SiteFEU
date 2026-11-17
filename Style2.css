@@ -139,8 +139,10 @@ h2 {
 
     .card img {
         width: 100%;
-        height: 200px;
+        aspect-ratio: 3 / 4; /* Format portrait (ou 1 / 1 pour un carré) */
+        height: auto;
         object-fit: cover;
+        object-position: center top; /* Garde toujours le haut de la photo visible */
         border-radius: 8px;
     }
 
