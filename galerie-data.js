@@ -1,4 +1,4 @@
-﻿// GÃ©nÃ©rÃ© automatiquement par PowerShell le 11/17/2026 22:57:00
+﻿// GÃ©nÃ©rÃ© automatiquement par PowerShell le 11/17/2026 23:16:57
 const galerieAlbums = [
     {
         "id":  "auffargis-2025",
@@ -30,9 +30,9 @@ const galerieAlbums = [
                    ]
     },
     {
-        "id":  "evénements-passés",
-        "titre":  "Evénements passés",
-        "dossier":  "img/galerie/Evénements passés/",
+        "id":  "evenements",
+        "titre":  "Evenements",
+        "dossier":  "img/galerie/Evenements/",
         "couverture":  "Affiche 21Juin26.jpeg",
         "photos":  [
                        "Affiche 21Juin26.jpeg",
