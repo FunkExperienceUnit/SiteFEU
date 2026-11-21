@@ -1,55 +1,122 @@
 const events = [
-    { 
-        date: "20-11-2026", 
-        lieu: "Paris 20ième – Chez Bistouille", 
+    {
+        date: "20-11-2026",
+        lieu: "Paris 20ième – Chez Bistouille",
         desc: "Soirée Funk",
-        lylo: "https://www.lylo.fr/concert/524a05-funk-experience-unit-en-concert-a-paris-20e-lyf-gambetta",       // Mettez le lien Lylo ici (ou supprimez la ligne si aucun)
-        infoconcert: "https://www.infoconcert.com/concerts/concert-funk-experience-unit-paris-1975099" // Mettez le lien Info Concert ici (ou supprimez si aucun)
+        lylo: "https://www.lylo.fr/concert/524a05-funk-experience-unit-en-concert-a-paris-20e-lyf-gambetta",
+        infoconcert: "https://www.infoconcert.com/concerts/concert-funk-experience-unit-paris-1975099"
     }
-    // Vous pouvez ajouter d'autres événements ici avec leurs propres liens distincts
 ];
 
 const list = document.getElementById("event-list");
 if (list) {
     events.forEach(ev => {
         const li = document.createElement("li");
-        
-        // Construction du contenu de base de l'événement
+
         let htmlContent = `<strong>${ev.date}</strong> – ${ev.lieu}<br><em>${ev.desc}</em>`;
-        
-        // Ajout dynamique des logos partenaires si les liens sont renseignés pour cet événement
+
         if (ev.lylo || ev.infoconcert) {
             htmlContent += `<div class="event-item-links">`;
             if (ev.lylo) {
-                htmlContent += `<a href="${ev.lylo}" target="_blank" rel="noopener noreferrer" aria-label="Lylo"><img src="img/Logo/lylo.png" alt="Lylo" class="event-partner-logo"></a>`;
+                htmlContent += `<a href="${ev.lylo}" target="_blank" rel="noopener noreferrer" aria-label="Lylo"><img src="img/Logo/lylo.png" alt="Lylo" class="event-partner-logo" loading="lazy" decoding="async"></a>`;
             }
             if (ev.infoconcert) {
-                htmlContent += `<a href="${ev.infoconcert}" target="_blank" rel="noopener noreferrer" aria-label="Info Concert"><img src="img/Logo/infoConcert.png" alt="Info Concert" class="event-partner-logo"></a>`;
+                htmlContent += `<a href="${ev.infoconcert}" target="_blank" rel="noopener noreferrer" aria-label="Info Concert"><img src="img/Logo/infoConcert.png" alt="Info Concert" class="event-partner-logo" loading="lazy" decoding="async"></a>`;
             }
             htmlContent += `</div>`;
         }
-        
+
         li.innerHTML = htmlContent;
         list.appendChild(li);
     });
 }
 
-/*EVENEMENT CODE ANCIEN
+const videoContainer = document.getElementById("dynamic-videos");
 
-const events = [
-    { date: "20-11-2026", lieu: "Paris 20ième – Bistouille", desc: "Soirée Funk" }
-];
-
-const list = document.getElementById("event-list");
-if (list) {
-    events.forEach(ev => {
-        const li = document.createElement("li");
-        li.innerHTML = `<strong>${ev.date}</strong> – ${ev.lieu}<br><em>${ev.desc}</em>`;
-        list.appendChild(li);
+function fermerToutesLesVideos() {
+    if (!videoContainer) return;
+    videoContainer.querySelectorAll('.video-card').forEach(card => {
+        const wrapper = card.querySelector('.video-active-wrapper');
+        const idVideo = card.dataset.videoId;
+        const titreVideo = card.dataset.videoTitle;
+        if (wrapper && idVideo) {
+            wrapper.replaceWith(creerFacade({ id: idVideo, titre: titreVideo }));
+        }
     });
 }
-*/
-const videoContainer = document.getElementById("dynamic-videos");
+
+function creerFacade(vid) {
+    const facade = document.createElement('div');
+    facade.classList.add('video-facade');
+    facade.setAttribute('role', 'button');
+    facade.setAttribute('tabindex', '0');
+    facade.setAttribute('aria-label', `Lire la vidéo : ${vid.titre}`);
+
+    const thumb = document.createElement('img');
+    thumb.src = `https://i.ytimg.com/vi/${vid.id}/hqdefault.jpg`;
+    thumb.alt = vid.titre;
+    thumb.loading = 'lazy';
+    thumb.decoding = 'async';
+
+    thumb.addEventListener('error', () => {
+        if (!thumb.dataset.fallback) {
+            thumb.dataset.fallback = '1';
+            thumb.src = `https://i.ytimg.com/vi/${vid.id}/0.jpg`;
+        }
+    });
+
+    const playBtn = document.createElement('span');
+    playBtn.classList.add('video-play-btn');
+    playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+
+    facade.appendChild(thumb);
+    facade.appendChild(playBtn);
+
+    const chargerIframe = () => {
+        fermerToutesLesVideos();
+
+        const wrapper = document.createElement('div');
+        wrapper.classList.add('video-active-wrapper');
+
+        const stopBtn = document.createElement('button');
+        stopBtn.type = 'button';
+        stopBtn.classList.add('video-stop-btn');
+        stopBtn.setAttribute('aria-label', 'Arrêter et fermer la vidéo');
+        stopBtn.innerHTML = '&times;';
+        stopBtn.addEventListener('click', (e) => {
+            e.stopPropagation();
+            wrapper.replaceWith(creerFacade(vid));
+        });
+
+        const iframe = document.createElement('iframe');
+        iframe.src = `https://www.youtube-nocookie.com/embed/${vid.id}?autoplay=1&modestbranding=1&rel=0`;
+        iframe.title = vid.titre;
+        iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+        iframe.allowFullscreen = true;
+        iframe.referrerPolicy = "strict-origin-when-cross-origin";
+
+        wrapper.appendChild(stopBtn);
+        wrapper.appendChild(iframe);
+        facade.replaceWith(wrapper);
+    };
+
+    facade.addEventListener('click', chargerIframe);
+    facade.addEventListener('keydown', (e) => {
+        if (e.key === 'Enter' || e.key === ' ') {
+            e.preventDefault();
+            chargerIframe();
+        }
+    });
+
+    return facade;
+}
+
+// Coupe la vidéo active si l'utilisateur clique sur un lien du menu de navigation
+document.querySelectorAll('.sticky-nav a').forEach(lien => {
+    lien.addEventListener('click', () => {
+        fermerToutesLesVideos();
+    });
+});
 
 function afficherVideos() {
     if (!videoContainer) return;
@@ -62,54 +129,10 @@ function afficherVideos() {
     youtubeVideos.forEach(vid => {
         const card = document.createElement('div');
         card.classList.add('video-card');
+        card.dataset.videoId = vid.id;
+        card.dataset.videoTitle = vid.titre;
 
-        // Conteneur cliquable (façade légère avant chargement de l'iframe YouTube)
-        const facade = document.createElement('div');
-        facade.classList.add('video-facade');
-        facade.setAttribute('role', 'button');
-        facade.setAttribute('tabindex', '0');
-        facade.setAttribute('aria-label', `Lire la vidéo : ${vid.titre}`);
-
-        const thumb = document.createElement('img');
-        thumb.src = `https://i.ytimg.com/vi/${vid.id}/hqdefault.jpg`;
-        thumb.alt = vid.titre;
-        thumb.loading = 'lazy';
-        thumb.decoding = 'async';
-
-        // Si jamais hqdefault échoue en réseau très instable, repli sur 0.jpg
-        thumb.addEventListener('error', () => {
-            if (!thumb.dataset.fallback) {
-                thumb.dataset.fallback = '1';
-                thumb.src = `https://i.ytimg.com/vi/${vid.id}/0.jpg`;
-            }
-        });
-
-        const playBtn = document.createElement('span');
-        playBtn.classList.add('video-play-btn');
-        playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
-
-        facade.appendChild(thumb);
-        facade.appendChild(playBtn);
-
-        const chargerIframe = () => {
-            const iframe = document.createElement('iframe');
-            iframe.src = `https://www.youtube-nocookie.com/embed/${vid.id}?autoplay=1&modestbranding=1&rel=0`;
-            iframe.title = vid.titre;
-            iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-            iframe.allowFullscreen = true;
-            iframe.referrerPolicy = "strict-origin-when-cross-origin";
-            facade.replaceWith(iframe);
-        };
-
-        facade.addEventListener('click', chargerIframe);
-        facade.addEventListener('keydown', (e) => {
-            if (e.key === 'Enter' || e.key === ' ') {
-                e.preventDefault();
-                chargerIframe();
-            }
-        });
-
-        card.appendChild(facade);
+        card.appendChild(creerFacade(vid));
 
         const title = document.createElement('h3');
         title.textContent = vid.titre;
@@ -143,6 +166,8 @@ function afficherAlbums() {
         const img = document.createElement('img');
         img.src = encodeURI(album.dossier + album.couverture);
         img.alt = album.titre;
+        img.loading = 'lazy';
+        img.decoding = 'async';
         img.classList.add('album-cover');
         card.appendChild(img);
 
@@ -184,28 +209,49 @@ function afficherPhotosAlbum(album) {
 
     const grid = document.createElement('div');
     grid.classList.add('photos-grid');
-
-    album.photos.forEach((nomFichier, index) => {
-        const photoUrl = encodeURI(album.dossier + nomFichier);
-
-        const thumbImg = document.createElement('img');
-        thumbImg.src = photoUrl;
-        thumbImg.alt = album.titre;
-        thumbImg.loading = 'lazy';
-        thumbImg.classList.add('photo-thumb'); // Indispensable pour l'association CSS
-
-        // Au clic, ouverture instantanée de la modale
-        thumbImg.addEventListener('click', () => {
-            ouvrirModal(album.photos, index, album.dossier);
-        });
-
-        grid.appendChild(thumbImg);
-    });
-
     galleryContainer.appendChild(grid);
+
+    const lotInitial = 8;
+    const tailleLotSuivant = 6;
+    let curseur = 0;
+
+    function ajouterLot(quantite) {
+        const fin = Math.min(curseur + quantite, album.photos.length);
+        for (let index = curseur; index < fin; index++) {
+            const nomFichier = album.photos[index];
+            const photoUrl = encodeURI(album.dossier + nomFichier);
+
+            const thumbImg = document.createElement('img');
+            thumbImg.src = photoUrl;
+            thumbImg.alt = album.titre;
+            thumbImg.loading = index < lotInitial ? 'eager' : 'lazy';
+            thumbImg.decoding = 'async';
+            thumbImg.classList.add('photo-thumb');
+
+            thumbImg.addEventListener('click', () => {
+                ouvrirModal(album.photos, index, album.dossier);
+            });
+
+            grid.appendChild(thumbImg);
+        }
+        curseur = fin;
+
+        if (curseur < album.photos.length) {
+            setTimeout(() => ajouterLot(tailleLotSuivant), 250);
+        }
+    }
+
+    ajouterLot(lotInitial);
 }
 
-// Fonction modale ultra-rapide (sans jQuery, avec boutons suivant/précédent)
+function prechargerPhoto(photos, index, dossier) {
+    if (!photos || photos.length <= 1) return;
+    const targetIndex = (index + 1 + photos.length) % photos.length;
+    const preImg = new Image();
+    preImg.decoding = 'async';
+    preImg.src = encodeURI(dossier + photos[targetIndex]);
+}
+
 function ouvrirModal(photos, currentIndex, dossier) {
     let indexActuel = currentIndex;
 
@@ -216,7 +262,7 @@ function ouvrirModal(photos, currentIndex, dossier) {
     <div class="modal-content">
       <span class="modal-close">&times;</span>
       <button class="modal-prev"><i class="fa-solid fa-chevron-left"></i></button>
-      <img class="modal-img" src="${encodeURI(dossier + photos[indexActuel])}" alt="Zoom">
+      <img class="modal-img" decoding="async" src="${encodeURI(dossier + photos[indexActuel])}" alt="Zoom">
       <button class="modal-next"><i class="fa-solid fa-chevron-right"></i></button>
       <div class="modal-counter">Photo ${indexActuel + 1} sur ${photos.length}</div>
     </div>
@@ -227,9 +273,14 @@ function ouvrirModal(photos, currentIndex, dossier) {
     const imgEl = modal.querySelector('.modal-img');
     const counterEl = modal.querySelector('.modal-counter');
 
+    prechargerPhoto(photos, indexActuel + 1, dossier);
+    prechargerPhoto(photos, indexActuel - 1, dossier);
+
     function mettreAJour() {
         imgEl.src = encodeURI(dossier + photos[indexActuel]);
         counterEl.textContent = `Photo ${indexActuel + 1} sur ${photos.length}`;
+        prechargerPhoto(photos, indexActuel + 1, dossier);
+        prechargerPhoto(photos, indexActuel - 1, dossier);
     }
 
     modal.querySelector('.modal-next').addEventListener('click', (e) => {
@@ -246,12 +297,10 @@ function ouvrirModal(photos, currentIndex, dossier) {
 
     modal.querySelector('.modal-close').addEventListener('click', () => modal.remove());
 
-    // Fermer en cliquant en dehors de l'image
     modal.addEventListener('click', (e) => {
         if (e.target === modal) modal.remove();
     });
 
-    // Support des touches du clavier (Échap pour fermer, flèches gauche/droite pour naviguer)
     document.addEventListener('keydown', function gererClavier(e) {
         if (!document.body.contains(modal)) {
             document.removeEventListener('keydown', gererClavier);
