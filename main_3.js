@@ -63,14 +63,53 @@ function afficherVideos() {
         const card = document.createElement('div');
         card.classList.add('video-card');
 
-        const iframe = document.createElement('iframe');
-        iframe.src = `https://www.youtube-nocookie.com/embed/${vid.id}?modestbranding=1&rel=0`;
-        iframe.title = vid.titre;
-        iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
-        iframe.allowFullscreen = true;
-        iframe.referrerPolicy = "strict-origin-when-cross-origin";
+        // Conteneur cliquable (façade légère avant chargement de l'iframe YouTube)
+        const facade = document.createElement('div');
+        facade.classList.add('video-facade');
+        facade.setAttribute('role', 'button');
+        facade.setAttribute('tabindex', '0');
+        facade.setAttribute('aria-label', `Lire la vidéo : ${vid.titre}`);
 
-        card.appendChild(iframe);
+        const thumb = document.createElement('img');
+        thumb.src = `https://i.ytimg.com/vi/${vid.id}/hqdefault.jpg`;
+        thumb.alt = vid.titre;
+        thumb.loading = 'lazy';
+        thumb.decoding = 'async';
+
+        // Si jamais hqdefault échoue en réseau très instable, repli sur 0.jpg
+        thumb.addEventListener('error', () => {
+            if (!thumb.dataset.fallback) {
+                thumb.dataset.fallback = '1';
+                thumb.src = `https://i.ytimg.com/vi/${vid.id}/0.jpg`;
+            }
+        });
+
+        const playBtn = document.createElement('span');
+        playBtn.classList.add('video-play-btn');
+        playBtn.innerHTML = '<i class="fa-solid fa-play"></i>';
+
+        facade.appendChild(thumb);
+        facade.appendChild(playBtn);
+
+        const chargerIframe = () => {
+            const iframe = document.createElement('iframe');
+            iframe.src = `https://www.youtube-nocookie.com/embed/${vid.id}?autoplay=1&modestbranding=1&rel=0`;
+            iframe.title = vid.titre;
+            iframe.allow = "accelerometer; autoplay; clipboard-write; encrypted-media; gyroscope; picture-in-picture";
+            iframe.allowFullscreen = true;
+            iframe.referrerPolicy = "strict-origin-when-cross-origin";
+            facade.replaceWith(iframe);
+        };
+
+        facade.addEventListener('click', chargerIframe);
+        facade.addEventListener('keydown', (e) => {
+            if (e.key === 'Enter' || e.key === ' ') {
+                e.preventDefault();
+                chargerIframe();
+            }
+        });
+
+        card.appendChild(facade);
 
         const title = document.createElement('h3');
         title.textContent = vid.titre;
