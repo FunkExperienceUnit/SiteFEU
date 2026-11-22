@@ -183,7 +183,7 @@ function afficherAlbums() {
 
         const img = document.createElement('img');
         img.src = encodeURI(album.dossier + album.couverture);
-        img.alt = album.titre;
+        img.alt = album.contexte ? `${album.titre} – ${album.contexte}` : album.titre;
         img.loading = 'lazy';
         img.decoding = 'async';
         img.classList.add('album-cover');
@@ -193,6 +193,13 @@ function afficherAlbums() {
         title.textContent = album.titre;
         title.classList.add('album-title');
         card.appendChild(title);
+
+        if (album.contexte && String(album.contexte).trim()) {
+            const contexte = document.createElement('p');
+            contexte.textContent = album.contexte.trim();
+            contexte.classList.add('album-context');
+            card.appendChild(contexte);
+        }
 
         const count = document.createElement('p');
         count.textContent = `${album.photos.length} photo${album.photos.length > 1 ? 's' : ''}`;
@@ -220,10 +227,22 @@ function afficherPhotosAlbum(album) {
     });
     galleryContainer.appendChild(backBtn);
 
+    const header = document.createElement('div');
+    header.classList.add('album-detail-header');
+
     const albumTitle = document.createElement('h3');
     albumTitle.textContent = album.titre;
-    albumTitle.style.cssText = "font-size: 1.8rem; margin-bottom: 20px; color: #ffd166;";
-    galleryContainer.appendChild(albumTitle);
+    albumTitle.classList.add('album-detail-title');
+    header.appendChild(albumTitle);
+
+    if (album.contexte && String(album.contexte).trim()) {
+        const albumContext = document.createElement('p');
+        albumContext.textContent = album.contexte.trim();
+        albumContext.classList.add('album-detail-context');
+        header.appendChild(albumContext);
+    }
+
+    galleryContainer.appendChild(header);
 
     const grid = document.createElement('div');
     grid.classList.add('photos-grid');

@@ -188,14 +188,49 @@ h2 {
 }
 
 .album-title {
-    margin: 15px 10px 5px 10px;
-    font-size: 1.2rem;
+    margin: 14px 12px 4px 12px;
+    font-size: 1.05rem;
+    line-height: 1.3;
     color: #ffffff;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
+}
+
+.album-context {
+    margin: 0 12px 6px 12px;
+    font-size: 0.82rem;
+    line-height: 1.35;
+    color: #ffd166;
+    display: -webkit-box;
+    -webkit-line-clamp: 2;
+    -webkit-box-orient: vertical;
+    overflow: hidden;
 }
 
 .album-count {
+    margin: 0 12px;
     color: #a0a0b2;
     font-size: 0.85rem;
+}
+
+.album-detail-header {
+    margin-bottom: 22px;
+}
+
+.album-detail-title {
+    margin: 0 0 6px 0;
+    font-size: 1.5rem;
+    line-height: 1.25;
+    color: #ffd166;
+}
+
+.album-detail-context {
+    margin: 0;
+    font-size: 0.95rem;
+    line-height: 1.4;
+    color: #c8c8d8;
 }
 
 /* --- Bouton Retour aux dossiers --- */

@@ -1,0 +1,285 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Éditeur de métadonnées — Galerie</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #0b0b10;
+      color: #f0f0f5;
+      max-width: 780px;
+      margin: 30px auto;
+      padding: 0 16px;
+    }
+    h1 {
+      color: #ffd166;
+      margin-bottom: 8px;
+      font-size: 1.8rem;
+    }
+    .sous-titre {
+      color: #a0a0b2;
+      font-size: 0.92rem;
+      margin: 0 0 22px 0;
+    }
+    h2 {
+      color: #ffffff;
+      font-size: 1.15rem;
+      margin: 0 0 6px 0;
+    }
+    .carte {
+      background: #161622;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 18px;
+    }
+    .album-header {
+      display: flex;
+      gap: 16px;
+      align-items: center;
+      margin-bottom: 14px;
+    }
+    .album-apercu {
+      width: 84px;
+      height: 64px;
+      object-fit: cover;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      background: #0b0b10;
+      flex-shrink: 0;
+    }
+    .chemin-fixe {
+      font-size: 0.8rem;
+      color: #8e8ea6;
+      word-break: break-all;
+    }
+    label {
+      display: block;
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+      color: #c8c8d8;
+    }
+    input, select {
+      width: 100%;
+      margin-top: 5px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: #0b0b10;
+      color: #ffffff;
+      font-size: 0.95rem;
+    }
+    input:focus, select:focus {
+      outline: none;
+      border-color: #ffd166;
+    }
+    .btn-enregistrer {
+      background: linear-gradient(135deg, #ff5e62 0%, #ff9966 100%);
+      color: #ffffff;
+      border: none;
+      border-radius: 8px;
+      margin-top: 8px;
+      width: 100%;
+      padding: 13px;
+      font-size: 1rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .message {
+      margin-top: 12px;
+      font-size: 0.9rem;
+      color: #ffd166;
+      min-height: 20px;
+    }
+    .vide {
+      color: #8e8ea6;
+      font-style: italic;
+    }
+  </style>
+</head>
+<body>
+  <h1>Métadonnées de la galerie</h1>
+  <p class="sous-titre">
+    Modifiez le titre court et le contexte de chaque album. Les chemins de dossiers et la liste des photos restent intacts.
+  </p>
+
+  <div id="liste-albums"></div>
+
+  <div class="carte">
+    <button type="button" id="btn-enregistrer" class="btn-enregistrer">
+      Enregistrer le fichier JS généré
+    </button>
+    <div id="message" class="message"></div>
+  </div>
+
+  <!-- Chargement local sans fetch -->
+  <script src="galerie-data.js"></script>
+  <script>
+    const albumsSource = (typeof galerieAlbums !== "undefined" && Array.isArray(galerieAlbums))
+      ? galerieAlbums.map(a => ({
+          ...a,
+          titre: a.titre || "",
+          contexte: a.contexte || "",
+          photos: Array.isArray(a.photos) ? [...a.photos] : []
+        }))
+      : [];
+
+    const videosSource = (typeof youtubeVideos !== "undefined" && Array.isArray(youtubeVideos))
+      ? youtubeVideos
+      : [];
+
+    const listeEl = document.getElementById("liste-albums");
+    const messageEl = document.getElementById("message");
+
+    function afficherAlbumsEditeur() {
+      if (albumsSource.length === 0) {
+        listeEl.innerHTML = '<div class="carte"><p class="vide">Aucun album trouvé dans galerie-data.js.</p></div>';
+        return;
+      }
+
+      listeEl.innerHTML = "";
+
+      albumsSource.forEach((album, idx) => {
+        const carte = document.createElement("div");
+        carte.className = "carte";
+
+        const header = document.createElement("div");
+        header.className = "album-header";
+
+        const img = document.createElement("img");
+        img.className = "album-apercu";
+        img.src = encodeURI((album.dossier || "") + (album.couverture || album.photos[0] || ""));
+        img.alt = album.titre;
+
+        const metaFixe = document.createElement("div");
+        const h2 = document.createElement("h2");
+        h2.textContent = album.titre || album.id || `Album ${idx + 1}`;
+        const chemin = document.createElement("div");
+        chemin.className = "chemin-fixe";
+        chemin.textContent = `Chemin conservé : ${album.dossier || ""} (${album.photos.length} photo${album.photos.length > 1 ? "s" : ""})`;
+
+        metaFixe.appendChild(h2);
+        metaFixe.appendChild(chemin);
+        header.appendChild(img);
+        header.appendChild(metaFixe);
+        carte.appendChild(header);
+
+        const lblTitre = document.createElement("label");
+        lblTitre.textContent = "Titre court (affiché en principal)";
+        const inpTitre = document.createElement("input");
+        inpTitre.type = "text";
+        inpTitre.value = album.titre;
+        inpTitre.addEventListener("input", () => {
+          albumsSource[idx].titre = inpTitre.value;
+          h2.textContent = inpTitre.value.trim() || album.id || `Album ${idx + 1}`;
+          messageEl.textContent = "Modifications en cours (pensez à enregistrer).";
+        });
+        lblTitre.appendChild(inpTitre);
+        carte.appendChild(lblTitre);
+
+        const lblContexte = document.createElement("label");
+        lblContexte.textContent = "Contexte (optionnel — lieu, date, précision lisible)";
+        const inpContexte = document.createElement("input");
+        inpContexte.type = "text";
+        inpContexte.placeholder = "ex. Fête de la musique 2026 – Live complet";
+        inpContexte.value = album.contexte;
+        inpContexte.addEventListener("input", () => {
+          albumsSource[idx].contexte = inpContexte.value;
+          messageEl.textContent = "Modifications en cours (pensez à enregistrer).";
+        });
+        lblContexte.appendChild(inpContexte);
+        carte.appendChild(lblContexte);
+
+        if (album.photos.length > 0) {
+          const lblCouv = document.createElement("label");
+          lblCouv.textContent = "Photo de couverture";
+          const selCouv = document.createElement("select");
+          album.photos.forEach(nomPhoto => {
+            const opt = document.createElement("option");
+            opt.value = nomPhoto;
+            opt.textContent = nomPhoto;
+            if (nomPhoto === album.couverture) opt.selected = true;
+            selCouv.appendChild(opt);
+          });
+          selCouv.addEventListener("change", () => {
+            albumsSource[idx].couverture = selCouv.value;
+            img.src = encodeURI((album.dossier || "") + selCouv.value);
+            messageEl.textContent = "Couverture mise à jour (pensez à enregistrer).";
+          });
+          lblCouv.appendChild(selCouv);
+          carte.appendChild(lblCouv);
+        }
+
+        listeEl.appendChild(carte);
+      });
+    }
+
+    function genererContenuJs() {
+      const albumsNettoyes = albumsSource.map(a => {
+        const obj = {
+          id: a.id,
+          titre: a.titre.trim() || a.id
+        };
+        if (a.contexte && a.contexte.trim()) {
+          obj.contexte = a.contexte.trim();
+        }
+        obj.dossier = a.dossier;
+        obj.couverture = a.couverture;
+        obj.photos = a.photos;
+        return obj;
+      });
+
+      return (
+        `const galerieAlbums = ${JSON.stringify(albumsNettoyes, null, 4)};\n\n\n` +
+        `const youtubeVideos = ${JSON.stringify(videosSource, null, 4)};\n`
+      );
+    }
+
+    function telechargementClassique(contenu) {
+      const blob = new Blob([contenu], { type: "application/javascript;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const lien = document.createElement("a");
+      lien.href = url;
+      lien.download = "galerie-data.js";
+      document.body.appendChild(lien);
+      lien.click();
+      lien.remove();
+      URL.revokeObjectURL(url);
+      messageEl.textContent = "Fichier généré ! Placez-le dans le dossier du site.";
+    }
+
+    document.getElementById("btn-enregistrer").addEventListener("click", async () => {
+      const contenu = genererContenuJs();
+
+      if (typeof window.showSaveFilePicker === "function") {
+        try {
+          const handle = await window.showSaveFilePicker({
+            suggestedName: "galerie-data.js",
+            types: [{
+              description: "Fichier JavaScript",
+              accept: { "application/javascript": [".js"] }
+            }]
+          });
+          const writable = await handle.createWritable();
+          await writable.write(contenu);
+          await writable.close();
+          messageEl.textContent = "Fichier enregistré avec succès !";
+          return;
+        } catch (err) {
+          if (err && err.name === "AbortError") {
+            messageEl.textContent = "Enregistrement annulé.";
+            return;
+          }
+        }
+      }
+
+      telechargementClassique(contenu);
+    });
+
+    afficherAlbumsEditeur();
+  </script>
+</body>
+</html>
