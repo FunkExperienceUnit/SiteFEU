@@ -1,4 +1,5 @@
-﻿const galerieAlbums = [
+﻿// Généré automatiquement par Python le 2026-11-22 15:48:38
+const galerieAlbums = [
     {
         "id": "auffargis-2025",
         "titre": "Auffargis 2025",
@@ -62,7 +63,7 @@
         ]
     },
     {
-        "id": "la-tréso-2026",
+        "id": "la-treso-2026",
         "titre": "La Tréso 2026",
         "contexte": "Concert à la Tréso 2026",
         "dossier": "img/galerie/La Tréso 2026/",
