@@ -1,0 +1,547 @@
+<!DOCTYPE html>
+<html lang="fr">
+<head>
+  <meta charset="UTF-8">
+  <title>Gestionnaire local – Funk Experience Unit</title>
+  <meta name="viewport" content="width=device-width, initial-scale=1.0">
+  <style>
+    * { box-sizing: border-box; }
+    body {
+      font-family: system-ui, -apple-system, sans-serif;
+      background: #0b0b10;
+      color: #f0f0f5;
+      max-width: 860px;
+      margin: 28px auto;
+      padding: 0 16px 50px;
+    }
+    h1 { color: #ffd166; margin-bottom: 6px; font-size: 1.8rem; }
+    .sous-titre { color: #9c9cb4; font-size: 0.9rem; margin-bottom: 20px; }
+    .onglets {
+      display: flex;
+      gap: 10px;
+      margin-bottom: 20px;
+      flex-wrap: wrap;
+    }
+    .onglet-btn {
+      background: #161622;
+      color: #d1d1e0;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      padding: 10px 16px;
+      border-radius: 8px;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .onglet-btn.actif {
+      background: #ffd166;
+      color: #0b0b10;
+      border-color: #ffd166;
+    }
+    .panneau { display: none; }
+    .panneau.actif { display: block; }
+    .carte {
+      background: #161622;
+      border: 1px solid rgba(255, 255, 255, 0.08);
+      border-radius: 12px;
+      padding: 20px;
+      margin-bottom: 20px;
+    }
+    h2 { color: #ffffff; font-size: 1.15rem; margin-top: 0; margin-bottom: 14px; }
+    label {
+      display: block;
+      margin-bottom: 12px;
+      font-size: 0.9rem;
+      color: #c8c8d8;
+    }
+    input, select {
+      width: 100%;
+      margin-top: 5px;
+      padding: 10px 12px;
+      border-radius: 8px;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+      background: #0b0b10;
+      color: #ffffff;
+      font-size: 0.95rem;
+    }
+    input:focus, select:focus { outline: none; border-color: #ffd166; }
+    button {
+      border: none;
+      border-radius: 8px;
+      padding: 10px 16px;
+      font-size: 0.92rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-or { background: #ffd166; color: #0b0b10; }
+    .btn-secondaire {
+      background: #242436;
+      color: #f0f0f5;
+      border: 1px solid rgba(255, 255, 255, 0.14);
+    }
+    .btn-save {
+      background: linear-gradient(135deg, #ff5e62 0%, #ff9966 100%);
+      color: #ffffff;
+      width: 100%;
+      padding: 13px;
+      font-size: 1rem;
+      margin-top: 14px;
+    }
+    .btn-suppr {
+      background: #2e181e;
+      color: #ff8a93;
+      border: 1px solid rgba(255, 94, 98, 0.35);
+      padding: 6px 11px;
+      font-size: 0.82rem;
+    }
+    .btn-suppr:hover { background: #ff5e62; color: #fff; }
+    .ligne {
+      display: flex;
+      justify-content: space-between;
+      align-items: center;
+      gap: 12px;
+      padding: 11px 0;
+      border-bottom: 1px solid rgba(255, 255, 255, 0.07);
+    }
+    .ligne:last-child { border-bottom: none; }
+    .actions-ligne { display: flex; gap: 8px; flex-wrap: wrap; align-items: center; }
+    .photos-tags {
+      display: flex;
+      flex-wrap: wrap;
+      gap: 6px;
+      margin-top: 8px;
+    }
+    .photo-tag {
+      background: #0b0b10;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      border-radius: 6px;
+      padding: 4px 8px;
+      font-size: 0.8rem;
+      display: inline-flex;
+      align-items: center;
+      gap: 6px;
+    }
+    .photo-tag button {
+      background: none;
+      color: #ff8a93;
+      padding: 0;
+      font-size: 0.85rem;
+    }
+    .message {
+      margin-top: 12px;
+      font-size: 0.9rem;
+      color: #ffd166;
+      min-height: 20px;
+    }
+    .vide { color: #8e8ea6; font-style: italic; }
+    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
+    @media (max-width: 600px) { .row-2 { grid-template-columns: 1fr; } }
+  </style>
+</head>
+<body>
+  <h1>Gestionnaire local du site</h1>
+  <p class="sous-titre">Événements, galerie photo et vidéos YouTube — export direct en fichiers .js</p>
+
+  <div class="onglets">
+    <button type="button" class="onglet-btn actif" data-cible="pan-events">Événements</button>
+    <button type="button" class="onglet-btn" data-cible="pan-galerie">Galerie &amp; Vidéos (galerie-data.js)</button>
+  </div>
+
+  <!-- ================= ONGLET ÉVÉNEMENTS ================= -->
+  <section id="pan-events" class="panneau actif">
+    <div class="carte">
+      <h2>Ajouter un événement</h2>
+      <form id="form-event">
+        <div class="row-2">
+          <label>Date <input type="text" id="ev-date" placeholder="ex. 20-11-2026" required></label>
+          <label>Lieu <input type="text" id="ev-lieu" placeholder="ex. Paris 20ième – Chez Bistouille" required></label>
+        </div>
+        <label>Description <input type="text" id="ev-desc" placeholder="ex. Soirée Funk" required></label>
+        <div class="row-2">
+          <label>Lien Lylo (optionnel) <input type="url" id="ev-lylo" placeholder="https://www.lylo.fr/..."></label>
+          <label>Lien InfoConcert (optionnel) <input type="url" id="ev-infoconcert" placeholder="https://www.infoconcert.com/..."></label>
+        </div>
+        <button type="submit" class="btn-or">Ajouter événement</button>
+      </form>
+    </div>
+
+    <div class="carte">
+      <h2>Liste des événements</h2>
+      <div id="liste-events"></div>
+      <button type="button" id="btn-save-events" class="btn-save">Enregistrer evenements-data.js</button>
+      <div id="msg-events" class="message"></div>
+    </div>
+  </section>
+
+  <!-- ================= ONGLET GALERIE & VIDÉOS ================= -->
+  <section id="pan-galerie" class="panneau">
+    <div class="carte">
+      <h2>Créer ou mettre à jour un album</h2>
+      <div class="row-2">
+        <label>
+          Titre de l'album
+          <input type="text" id="alb-titre" placeholder="ex. Concert La Bellevilloise 2026">
+        </label>
+        <label>
+          Dossier dans img/galerie/
+          <input type="text" id="alb-dossier" placeholder="ex. img/galerie/Concert La Bellevilloise 2026/">
+        </label>
+      </div>
+
+      <label>
+        Sélectionner les photos du dossier (pour récupérer leurs noms de fichiers)
+        <input type="file" id="alb-fichiers" accept=".jpg,.jpeg,.png,.jfif,.webp,image/*" multiple>
+      </label>
+
+      <div class="actions-ligne" style="margin-bottom: 12px;">
+        <button type="button" id="btn-ajouter-album" class="btn-or">Ajouter / Mettre à jour l'album</button>
+        <button type="button" id="btn-vider-form-album" class="btn-secondaire">Réinitialiser les champs</button>
+      </div>
+    </div>
+
+    <div class="carte">
+      <h2>Albums existants</h2>
+      <div id="liste-albums"></div>
+    </div>
+
+    <div class="carte">
+      <h2>Vidéos YouTube</h2>
+      <form id="form-video">
+        <div class="row-2">
+          <label>
+            ID ou lien YouTube
+            <input type="text" id="vid-id" placeholder="ex. MwhbsUXIsfo ou https://youtu.be/..." required>
+          </label>
+          <label>
+            Titre de la vidéo
+            <input type="text" id="vid-titre" placeholder="ex. Stayin Alive COVER 2025" required>
+          </label>
+        </div>
+        <button type="submit" class="btn-or">Ajouter vidéo</button>
+      </form>
+
+      <div id="liste-videos" style="margin-top: 16px;"></div>
+
+      <button type="button" id="btn-save-galerie" class="btn-save">Enregistrer galerie-data.js (Albums + Vidéos)</button>
+      <div id="msg-galerie" class="message"></div>
+    </div>
+  </section>
+
+  <!-- Chargement local sans fetch -->
+  <script src="evenements-data.js"></script>
+  <script src="galerie-data.js"></script>
+  <script>
+    // --- Onglets ---
+    document.querySelectorAll(".onglet-btn").forEach(btn => {
+      btn.addEventListener("click", () => {
+        document.querySelectorAll(".onglet-btn").forEach(b => b.classList.remove("actif"));
+        document.querySelectorAll(".panneau").forEach(p => p.classList.remove("actif"));
+        btn.classList.add("actif");
+        document.getElementById(btn.dataset.cible).classList.add("actif");
+      });
+    });
+
+    // --- Utilitaire d'enregistrement fichier ---
+    async function enregistrerFichierJs(nomFichier, contenu, msgEl) {
+      if (typeof window.showSaveFilePicker === "function") {
+        try {
+          const handle = await window.showSaveFilePicker({
+            suggestedName: nomFichier,
+            types: [{
+              description: "Fichier JavaScript",
+              accept: { "application/javascript": [".js"] }
+            }]
+          });
+          const writable = await handle.createWritable();
+          await writable.write(contenu);
+          await writable.close();
+          msgEl.textContent = `${nomFichier} enregistré avec succès !`;
+          return;
+        } catch (err) {
+          if (err && err.name === "AbortError") {
+            msgEl.textContent = "Enregistrement annulé.";
+            return;
+          }
+        }
+      }
+
+      const blob = new Blob([contenu], { type: "application/javascript;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const a = document.createElement("a");
+      a.href = url;
+      a.download = nomFichier;
+      document.body.appendChild(a);
+      a.click();
+      a.remove();
+      URL.revokeObjectURL(url);
+      msgEl.textContent = `${nomFichier} généré ! Placez-le dans le dossier du site.`;
+    }
+
+    // ================= ÉVÉNEMENTS =================
+    let stateEvents = (typeof events !== "undefined" && Array.isArray(events))
+      ? events.map(e => ({ ...e }))
+      : [];
+
+    const listeEventsEl = document.getElementById("liste-events");
+    const msgEventsEl = document.getElementById("msg-events");
+
+    function renduEvents() {
+      if (!stateEvents.length) {
+        listeEventsEl.innerHTML = '<p class="vide">Aucun événement enregistré.</p>';
+        return;
+      }
+      listeEventsEl.innerHTML = "";
+      stateEvents.forEach((ev, i) => {
+        const div = document.createElement("div");
+        div.className = "ligne";
+        div.innerHTML = `<div><strong>${ev.date || ""}</strong> – ${ev.lieu || ""}<br><em>${ev.desc || ""}</em></div>`;
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "btn-suppr";
+        btn.textContent = "Supprimer événement";
+        btn.addEventListener("click", () => {
+          stateEvents.splice(i, 1);
+          renduEvents();
+          msgEventsEl.textContent = "Événement supprimé (pensez à enregistrer).";
+        });
+        div.appendChild(btn);
+        listeEventsEl.appendChild(div);
+      });
+    }
+
+    document.getElementById("form-event").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const date = document.getElementById("ev-date").value.trim();
+      const lieu = document.getElementById("ev-lieu").value.trim();
+      const desc = document.getElementById("ev-desc").value.trim();
+      const lylo = document.getElementById("ev-lylo").value.trim();
+      const infoconcert = document.getElementById("ev-infoconcert").value.trim();
+      if (!date || !lieu || !desc) return;
+
+      const item = { date, lieu, desc };
+      if (lylo) item.lylo = lylo;
+      if (infoconcert) item.infoconcert = infoconcert;
+
+      stateEvents.push(item);
+      renduEvents();
+      e.target.reset();
+      msgEventsEl.textContent = "Événement ajouté (pensez à enregistrer).";
+    });
+
+    document.getElementById("btn-save-events").addEventListener("click", () => {
+      const contenu = "const events = " + JSON.stringify(stateEvents, null, 4) + ";\n";
+      enregistrerFichierJs("evenements-data.js", contenu, msgEventsEl);
+    });
+
+    // ================= GALERIE & VIDÉOS =================
+    let stateAlbums = (typeof galerieAlbums !== "undefined" && Array.isArray(galerieAlbums))
+      ? galerieAlbums.map(a => ({ ...a, photos: Array.isArray(a.photos) ? [...a.photos] : [] }))
+      : [];
+
+    let stateVideos = (typeof youtubeVideos !== "undefined" && Array.isArray(youtubeVideos))
+      ? youtubeVideos.map(v => ({ ...v }))
+      : [];
+
+    const listeAlbumsEl = document.getElementById("liste-albums");
+    const listeVideosEl = document.getElementById("liste-videos");
+    const msgGalerieEl = document.getElementById("msg-galerie");
+
+    function slugifyId(str) {
+      return str.toLowerCase().trim().replace(/\s+/g, "-");
+    }
+
+    document.getElementById("alb-titre").addEventListener("input", (e) => {
+      const dossierInput = document.getElementById("alb-dossier");
+      if (!dossierInput.dataset.manuel && e.target.value.trim()) {
+        dossierInput.value = `img/galerie/${e.target.value.trim()}/`;
+      }
+    });
+
+    document.getElementById("alb-dossier").addEventListener("input", (e) => {
+      e.target.dataset.manuel = e.target.value.trim() ? "1" : "";
+    });
+
+    document.getElementById("btn-vider-form-album").addEventListener("click", () => {
+      document.getElementById("alb-titre").value = "";
+      const d = document.getElementById("alb-dossier");
+      d.value = "";
+      delete d.dataset.manuel;
+      document.getElementById("alb-fichiers").value = "";
+    });
+
+    document.getElementById("btn-ajouter-album").addEventListener("click", () => {
+      const titre = document.getElementById("alb-titre").value.trim();
+      let dossier = document.getElementById("alb-dossier").value.trim();
+      const files = Array.from(document.getElementById("alb-fichiers").files || []);
+
+      if (!titre) {
+        alert("Merci d'indiquer un titre d'album.");
+        return;
+      }
+
+      if (!dossier) dossier = `img/galerie/${titre}/`;
+      if (!dossier.endsWith("/")) dossier += "/";
+
+      const nomsPhotos = files.map(f => f.name).sort((a, b) => a.localeCompare(b, "fr"));
+      const id = slugifyId(titre);
+      const indexExistant = stateAlbums.findIndex(a => a.id === id || a.titre.toLowerCase() === titre.toLowerCase());
+
+      if (indexExistant >= 0) {
+        const existant = stateAlbums[indexExistant];
+        const fusionPhotos = nomsPhotos.length
+          ? Array.from(new Set([...existant.photos, ...nomsPhotos]))
+          : existant.photos;
+        stateAlbums[indexExistant] = {
+          ...existant,
+          titre,
+          dossier,
+          couverture: fusionPhotos[0] || existant.couverture || "",
+          photos: fusionPhotos
+        };
+      } else {
+        stateAlbums.push({
+          id,
+          titre,
+          dossier,
+          couverture: nomsPhotos[0] || "",
+          photos: nomsPhotos
+        });
+      }
+
+      renduAlbums();
+      msgGalerieEl.textContent = `Album "${titre}" mis à jour (pensez à enregistrer galerie-data.js).`;
+    });
+
+    function renduAlbums() {
+      if (!stateAlbums.length) {
+        listeAlbumsEl.innerHTML = '<p class="vide">Aucun album dans galerie-data.js.</p>';
+        return;
+      }
+      listeAlbumsEl.innerHTML = "";
+
+      stateAlbums.forEach((alb, aIdx) => {
+        const bloc = document.createElement("div");
+        bloc.className = "ligne";
+        bloc.style.alignItems = "flex-start";
+
+        const gauche = document.createElement("div");
+        gauche.style.flex = "1";
+        gauche.innerHTML = `
+          <strong>${alb.titre}</strong> <span style="color:#9c9cb4;font-size:0.85rem;">(${alb.photos.length} photo(s))</span><br>
+          <small style="color:#9c9cb4;">Dossier : ${alb.dossier} | Couverture : ${alb.couverture || "aucune"}</small>
+        `;
+
+        const tags = document.createElement("div");
+        tags.className = "photos-tags";
+        alb.photos.forEach((photo, pIdx) => {
+          const tag = document.createElement("span");
+          tag.className = "photo-tag";
+          tag.textContent = photo;
+
+          const btnCouv = document.createElement("button");
+          btnCouv.type = "button";
+          btnCouv.title = "Définir comme couverture";
+          btnCouv.textContent = alb.couverture === photo ? "★" : "☆";
+          btnCouv.style.color = alb.couverture === photo ? "#ffd166" : "#9c9cb4";
+          btnCouv.addEventListener("click", () => {
+            alb.couverture = photo;
+            renduAlbums();
+          });
+
+          const btnDelPhoto = document.createElement("button");
+          btnDelPhoto.type = "button";
+          btnDelPhoto.title = "Retirer la photo";
+          btnDelPhoto.textContent = "×";
+          btnDelPhoto.addEventListener("click", () => {
+            alb.photos.splice(pIdx, 1);
+            if (alb.couverture === photo) {
+              alb.couverture = alb.photos[0] || "";
+            }
+            renduAlbums();
+          });
+
+          tag.appendChild(btnCouv);
+          tag.appendChild(btnDelPhoto);
+          tags.appendChild(tag);
+        });
+        gauche.appendChild(tags);
+
+        const actions = document.createElement("div");
+        actions.className = "actions-ligne";
+
+        const btnSupprAlb = document.createElement("button");
+        btnSupprAlb.type = "button";
+        btnSupprAlb.className = "btn-suppr";
+        btnSupprAlb.textContent = "Supprimer album";
+        btnSupprAlb.addEventListener("click", () => {
+          stateAlbums.splice(aIdx, 1);
+          renduAlbums();
+          msgGalerieEl.textContent = "Album supprimé (pensez à enregistrer).";
+        });
+
+        actions.appendChild(btnSupprAlb);
+        bloc.appendChild(gauche);
+        bloc.appendChild(actions);
+        listeAlbumsEl.appendChild(bloc);
+      });
+    }
+
+    function extraireIdYoutube(valeur) {
+      const v = valeur.trim();
+      const matchShort = v.match(/youtu\.be\/([a-zA-Z0-9_-]{6,})/);
+      if (matchShort) return matchShort[1];
+      const matchLong = v.match(/[?&]v=([a-zA-Z0-9_-]{6,})/);
+      if (matchLong) return matchLong[1];
+      return v;
+    }
+
+    document.getElementById("form-video").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const rawId = document.getElementById("vid-id").value;
+      const titre = document.getElementById("vid-titre").value.trim();
+      const id = extraireIdYoutube(rawId);
+      if (!id || !titre) return;
+
+      stateVideos.push({ id, titre });
+      renduVideos();
+      e.target.reset();
+      msgGalerieEl.textContent = "Vidéo ajoutée (pensez à enregistrer galerie-data.js).";
+    });
+
+    function renduVideos() {
+      if (!stateVideos.length) {
+        listeVideosEl.innerHTML = '<p class="vide">Aucune vidéo enregistrée.</p>';
+        return;
+      }
+      listeVideosEl.innerHTML = "";
+      stateVideos.forEach((vid, vIdx) => {
+        const div = document.createElement("div");
+        div.className = "ligne";
+        div.innerHTML = `<div><strong>${vid.titre}</strong> <span style="color:#9c9cb4;font-size:0.85rem;">(ID : ${vid.id})</span></div>`;
+        const btn = document.createElement("button");
+        btn.type = "button";
+        btn.className = "btn-suppr";
+        btn.textContent = "Supprimer";
+        btn.addEventListener("click", () => {
+          stateVideos.splice(vIdx, 1);
+          renduVideos();
+          msgGalerieEl.textContent = "Vidéo supprimée (pensez à enregistrer).";
+        });
+        div.appendChild(btn);
+        listeVideosEl.appendChild(div);
+      });
+    }
+
+    document.getElementById("btn-save-galerie").addEventListener("click", () => {
+      const albumsStr = JSON.stringify(stateAlbums, null, 4);
+      const videosStr = JSON.stringify(stateVideos, null, 4);
+      const contenu =
+        `const galerieAlbums = ${albumsStr};\n\n\n` +
+        `const youtubeVideos = ${videosStr};\n`;
+      enregistrerFichierJs("galerie-data.js", contenu, msgGalerieEl);
+    });
+
+    renduEvents();
+    renduAlbums();
+    renduVideos();
+  </script>
+</body>
+</html>
