@@ -167,6 +167,14 @@ if (videoContainer) {
     afficherVideos();
 }
 
+function scrollerVersGalerie() {
+    if (!galleryContainer) return;
+    const section = galleryContainer.closest('.section') || galleryContainer;
+    requestAnimationFrame(() => {
+        section.scrollIntoView({ behavior: 'instant', block: 'start' });
+    });
+}
+
 const galleryContainer = document.getElementById("dynamic-gallery");
 
 function afficherAlbums() {
@@ -208,7 +216,9 @@ function afficherAlbums() {
 
         card.addEventListener('click', () => {
             afficherPhotosAlbum(album);
+            scrollerVersGalerie();
         });
+  
 
         grid.appendChild(card);
     });
@@ -222,9 +232,11 @@ function afficherPhotosAlbum(album) {
     const backBtn = document.createElement('button');
     backBtn.innerHTML = '<i class="fa-solid fa-arrow-left"></i> Retour aux dossiers';
     backBtn.classList.add('back-btn');
-    backBtn.addEventListener('click', () => {
-        afficherAlbums();
-    });
+// Dans afficherPhotosAlbum(album) sur backBtn :
+backBtn.addEventListener('click', () => {
+    afficherAlbums();
+    scrollerVersGalerie();
+});
     galleryContainer.appendChild(backBtn);
 
     const header = document.createElement('div');
