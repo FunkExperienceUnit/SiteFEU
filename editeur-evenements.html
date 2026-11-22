@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Gestionnaire local – Événements &amp; Vidéos</title>
+  <title>Éditeur d'événements</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     * { box-sizing: border-box; }
@@ -10,42 +10,27 @@
       font-family: system-ui, -apple-system, sans-serif;
       background: #0b0b10;
       color: #f0f0f5;
-      max-width: 820px;
-      margin: 28px auto;
-      padding: 0 16px 50px;
+      max-width: 720px;
+      margin: 30px auto;
+      padding: 0 16px;
     }
-    h1 { color: #ffd166; margin-bottom: 6px; font-size: 1.8rem; }
-    .sous-titre { color: #9c9cb4; font-size: 0.9rem; margin-bottom: 20px; }
-    .onglets {
-      display: flex;
-      gap: 10px;
+    h1 {
+      color: #ffd166;
       margin-bottom: 20px;
-      flex-wrap: wrap;
+      font-size: 1.8rem;
     }
-    .onglet-btn {
-      background: #161622;
-      color: #d1d1e0;
-      border: 1px solid rgba(255, 255, 255, 0.1);
-      padding: 10px 16px;
-      border-radius: 8px;
-      font-weight: 700;
-      cursor: pointer;
+    h2 {
+      color: #ffffff;
+      font-size: 1.2rem;
+      margin-top: 0;
     }
-    .onglet-btn.actif {
-      background: #ffd166;
-      color: #0b0b10;
-      border-color: #ffd166;
-    }
-    .panneau { display: none; }
-    .panneau.actif { display: block; }
     .carte {
       background: #161622;
       border: 1px solid rgba(255, 255, 255, 0.08);
       border-radius: 12px;
       padding: 20px;
-      margin-bottom: 20px;
+      margin-bottom: 22px;
     }
-    h2 { color: #ffffff; font-size: 1.15rem; margin-top: 0; margin-bottom: 14px; }
     label {
       display: block;
       margin-bottom: 12px;
@@ -62,139 +47,238 @@
       color: #ffffff;
       font-size: 0.95rem;
     }
-    input:focus { outline: none; border-color: #ffd166; }
+    input:focus {
+      outline: none;
+      border-color: #ffd166;
+    }
     button {
       border: none;
       border-radius: 8px;
-      padding: 10px 16px;
-      font-size: 0.92rem;
+      padding: 11px 18px;
+      font-size: 0.95rem;
       font-weight: 700;
       cursor: pointer;
     }
-    .btn-or { background: #ffd166; color: #0b0b10; }
-    .btn-save {
+    .btn-ajouter {
+      background: #ffd166;
+      color: #0b0b10;
+    }
+    .btn-enregistrer {
       background: linear-gradient(135deg, #ff5e62 0%, #ff9966 100%);
       color: #ffffff;
+      margin-top: 16px;
       width: 100%;
       padding: 13px;
       font-size: 1rem;
-      margin-top: 14px;
     }
-    .btn-suppr {
-      background: #2e181e;
-      color: #ff8a93;
-      border: 1px solid rgba(255, 94, 98, 0.35);
-      padding: 6px 11px;
-      font-size: 0.82rem;
-      flex-shrink: 0;
-    }
-    .btn-suppr:hover { background: #ff5e62; color: #fff; }
-    .ligne {
+    .evenement-ligne {
       display: flex;
       justify-content: space-between;
       align-items: center;
-      gap: 12px;
-      padding: 11px 0;
+      gap: 14px;
+      padding: 12px 0;
       border-bottom: 1px solid rgba(255, 255, 255, 0.07);
     }
-    .ligne:last-child { border-bottom: none; }
+    .evenement-ligne:last-child {
+      border-bottom: none;
+    }
+    .btn-supprimer {
+      background: #2e181e;
+      color: #ff8a93;
+      border: 1px solid rgba(255, 94, 98, 0.35);
+      padding: 7px 12px;
+      font-size: 0.85rem;
+      flex-shrink: 0;
+    }
+    .btn-supprimer:hover {
+      background: #ff5e62;
+      color: #ffffff;
+    }
     .message {
       margin-top: 12px;
       font-size: 0.9rem;
       color: #ffd166;
       min-height: 20px;
     }
-    .vide { color: #8e8ea6; font-style: italic; }
-    .row-2 { display: grid; grid-template-columns: 1fr 1fr; gap: 12px; }
-    @media (max-width: 600px) { .row-2 { grid-template-columns: 1fr; } }
+    .vide {
+      color: #8e8ea6;
+      font-style: italic;
+    }
   </style>
 </head>
 <body>
-  <h1>Gestionnaire local</h1>
-  <p class="sous-titre">Événements et vidéos YouTube — export direct en fichiers .js</p>
+  <h1>Gestion des événements</h1>
 
-  <div class="onglets">
-    <button type="button" class="onglet-btn actif" data-cible="pan-events">Événements</button>
-    <button type="button" class="onglet-btn" data-cible="pan-videos">Vidéos YouTube</button>
+  <div class="carte">
+    <h2>Message lorsqu'il n'y a pas d'événement</h2>
+    <label>
+      Texte affiché si la liste est vide (ou entrée « message seul »)
+      <input type="text" id="message-aucun-evenement" placeholder="ex. Pas de concert prévu pour le moment, nouvelles dates très bientôt !">
+    </label>
   </div>
 
-  <!-- ================= ONGLET ÉVÉNEMENTS ================= -->
-  <section id="pan-events" class="panneau actif">
-    <div class="carte">
-      <h2>Ajouter un événement ou un message</h2>
-      <form id="form-event">
-        <div class="row-2">
-          <label>Date <input type="text" id="ev-date" placeholder="ex. 20-11-2026"></label>
-          <label>Lieu <input type="text" id="ev-lieu" placeholder="ex. Paris 20ième – Chez Bistouille"></label>
-        </div>
-        <label>Description <input type="text" id="ev-desc" placeholder="ex. Soirée Funk"></label>
-        <label>
-          Message seul (quand il n'y a pas d'événement, sans date ni lieu)
-          <input type="text" id="ev-message" placeholder="ex. Prochaines dates à venir très bientôt !">
-        </label>
-        <div class="row-2">
-          <label>Lien Lylo (optionnel) <input type="url" id="ev-lylo" placeholder="https://www.lylo.fr/..."></label>
-          <label>Lien InfoConcert (optionnel) <input type="url" id="ev-infoconcert" placeholder="https://www.infoconcert.com/..."></label>
-        </div>
-        <button type="submit" class="btn-or">Ajouter</button>
-      </form>
-    </div>
+  <div class="carte">
+    <h2>Nouvel événement ou message seul</h2>
+    <form id="form-evenement">
+      <label>
+        Date
+        <input type="text" id="date" placeholder="ex. 20-11-2026">
+      </label>
+      <label>
+        Lieu
+        <input type="text" id="lieu" placeholder="ex. Paris 20ième – Chez Bistouille">
+      </label>
+      <label>
+        Description
+        <input type="text" id="desc" placeholder="ex. Soirée Funk">
+      </label>
+      <label>
+        Message seul (optionnel, sans date ni lieu)
+        <input type="text" id="message-seul" placeholder="ex. Nouvelles dates à venir très bientôt !">
+      </label>
+      <label>
+        Lien Lylo (optionnel)
+        <input type="url" id="lylo" placeholder="https://www.lylo.fr/...">
+      </label>
+      <label>
+        Lien InfoConcert (optionnel)
+        <input type="url" id="infoconcert" placeholder="https://www.infoconcert.com/...">
+      </label>
+      <button type="submit" class="btn-ajouter">Ajouter événement</button>
+    </form>
+  </div>
 
-    <div class="carte">
-      <h2>Liste des événements</h2>
-      <div id="liste-events"></div>
-      <button type="button" id="btn-save-events" class="btn-save">Enregistrer evenements-data.js</button>
-      <div id="msg-events" class="message"></div>
-    </div>
-  </section>
-
-  <!-- ================= ONGLET VIDÉOS YOUTUBE ================= -->
-  <section id="pan-videos" class="panneau">
-    <div class="carte">
-      <h2>Ajouter une vidéo YouTube</h2>
-      <form id="form-video">
-        <div class="row-2">
-          <label>
-            ID ou lien YouTube
-            <input type="text" id="vid-id" placeholder="ex. MwhbsUXIsfo ou https://youtu.be/..." required>
-          </label>
-          <label>
-            Titre de la vidéo
-            <input type="text" id="vid-titre" placeholder="ex. Stayin Alive COVER 2025" required>
-          </label>
-        </div>
-        <button type="submit" class="btn-or">Ajouter vidéo</button>
-      </form>
-    </div>
-
-    <div class="carte">
-      <h2>Vidéos enregistrées</h2>
-      <div id="liste-videos"></div>
-      <button type="button" id="btn-save-videos" class="btn-save">Enregistrer galerie-data.js</button>
-      <div id="msg-videos" class="message"></div>
-    </div>
-  </section>
+  <div class="carte">
+    <h2>Événements enregistrés</h2>
+    <div id="liste-evenements"></div>
+    <button type="button" id="btn-enregistrer" class="btn-enregistrer">
+      Enregistrer le .js généré (evenements-data.js)
+    </button>
+    <div id="message" class="message"></div>
+  </div>
 
   <!-- Chargement local sans fetch -->
   <script src="evenements-data.js"></script>
-  <script src="galerie-data.js"></script>
   <script>
-    // --- Onglets ---
-    document.querySelectorAll(".onglet-btn").forEach(btn => {
-      btn.addEventListener("click", () => {
-        document.querySelectorAll(".onglet-btn").forEach(b => b.classList.remove("actif"));
-        document.querySelectorAll(".panneau").forEach(p => p.classList.remove("actif"));
-        btn.classList.add("actif");
-        document.getElementById(btn.dataset.cible).classList.add("actif");
+    const MESSAGE_DEFAUT = "Pas de concert prévu pour le moment, nouvelles dates très bientôt !";
+
+    let listeEvents = (typeof events !== "undefined" && Array.isArray(events))
+      ? events.map(e => ({ ...e }))
+      : [];
+
+    const msgVideInput = document.getElementById("message-aucun-evenement");
+    msgVideInput.value = (typeof messageSansEvenement === "string" && messageSansEvenement.trim())
+      ? messageSansEvenement.trim()
+      : MESSAGE_DEFAUT;
+
+    const listeEl = document.getElementById("liste-evenements");
+    const messageEl = document.getElementById("message");
+
+    function estMessageSeul(ev) {
+      return Boolean(ev && ev.message && !ev.date && !ev.lieu && !ev.desc);
+    }
+
+    function afficherListe() {
+      if (listeEvents.length === 0) {
+        const msgActuel = msgVideInput.value.trim() || MESSAGE_DEFAUT;
+        listeEl.innerHTML = `<p class="vide">Aucun événement — message affiché : « ${msgActuel} »</p>`;
+        return;
+      }
+
+      listeEl.innerHTML = "";
+      listeEvents.forEach((ev, index) => {
+        const ligne = document.createElement("div");
+        ligne.className = "evenement-ligne";
+
+        const infos = document.createElement("div");
+        if (estMessageSeul(ev)) {
+          infos.innerHTML = `<em>${ev.message}</em>`;
+        } else {
+          infos.innerHTML = `<strong>${ev.date || ""}</strong> – ${ev.lieu || ""}<br><em>${ev.desc || ""}</em>`;
+        }
+
+        const btnSuppr = document.createElement("button");
+        btnSuppr.type = "button";
+        btnSuppr.className = "btn-supprimer";
+        btnSuppr.textContent = "Supprimer événement";
+        btnSuppr.addEventListener("click", () => {
+          listeEvents.splice(index, 1);
+          afficherListe();
+          messageEl.textContent = "Événement supprimé (pensez à enregistrer le .js).";
+        });
+
+        ligne.appendChild(infos);
+        ligne.appendChild(btnSuppr);
+        listeEl.appendChild(ligne);
       });
+    }
+
+    msgVideInput.addEventListener("input", () => {
+      if (listeEvents.length === 0) {
+        afficherListe();
+      }
+      messageEl.textContent = "Message mis à jour (pensez à enregistrer le .js).";
     });
 
-    // --- Utilitaire d'enregistrement fichier ---
-    async function enregistrerFichierJs(nomFichier, contenu, msgEl) {
+    document.getElementById("form-evenement").addEventListener("submit", (e) => {
+      e.preventDefault();
+
+      const date = document.getElementById("date").value.trim();
+      const lieu = document.getElementById("lieu").value.trim();
+      const desc = document.getElementById("desc").value.trim();
+      const msgSeul = document.getElementById("message-seul").value.trim();
+      const lylo = document.getElementById("lylo").value.trim();
+      const infoconcert = document.getElementById("infoconcert").value.trim();
+
+      let nouvelEvent;
+      if (msgSeul && !date && !lieu && !desc) {
+        nouvelEvent = { message: msgSeul };
+      } else {
+        if (!date || !lieu || !desc) {
+          alert("Renseignez soit un « Message seul », soit la date, le lieu et la description.");
+          return;
+        }
+        nouvelEvent = { date, lieu, desc };
+        if (msgSeul) nouvelEvent.message = msgSeul;
+        if (lylo) nouvelEvent.lylo = lylo;
+        if (infoconcert) nouvelEvent.infoconcert = infoconcert;
+      }
+
+      listeEvents.push(nouvelEvent);
+      afficherListe();
+
+      e.target.reset();
+      messageEl.textContent = "Événement ajouté (pensez à enregistrer le .js).";
+    });
+
+    function genererContenuJs() {
+      const msgFinal = (msgVideInput.value.trim() || MESSAGE_DEFAUT).replace(/\\/g, "\\\\").replace(/"/g, '\\"');
+      return (
+        `const messageSansEvenement = "${msgFinal}";\n\n` +
+        `const events = ${JSON.stringify(listeEvents, null, 4)};\n`
+      );
+    }
+
+    function telechargementClassique(contenu) {
+      const blob = new Blob([contenu], { type: "application/javascript;charset=utf-8" });
+      const url = URL.createObjectURL(blob);
+      const lien = document.createElement("a");
+      lien.href = url;
+      lien.download = "evenements-data.js";
+      document.body.appendChild(lien);
+      lien.click();
+      lien.remove();
+      URL.revokeObjectURL(url);
+      messageEl.textContent = "Fichier evenements-data.js généré ! Placez-le dans le dossier du site.";
+    }
+
+    document.getElementById("btn-enregistrer").addEventListener("click", async () => {
+      const contenu = genererContenuJs();
+
       if (typeof window.showSaveFilePicker === "function") {
         try {
           const handle = await window.showSaveFilePicker({
-            suggestedName: nomFichier,
+            suggestedName: "evenements-data.js",
             types: [{
               description: "Fichier JavaScript",
               accept: { "application/javascript": [".js"] }
@@ -203,171 +287,20 @@
           const writable = await handle.createWritable();
           await writable.write(contenu);
           await writable.close();
-          msgEl.textContent = `${nomFichier} enregistré avec succès !`;
+          messageEl.textContent = "Fichier evenements-data.js enregistré avec succès !";
           return;
         } catch (err) {
           if (err && err.name === "AbortError") {
-            msgEl.textContent = "Enregistrement annulé.";
+            messageEl.textContent = "Enregistrement annulé.";
             return;
           }
         }
       }
 
-      const blob = new Blob([contenu], { type: "application/javascript;charset=utf-8" });
-      const url = URL.createObjectURL(blob);
-      const a = document.createElement("a");
-      a.href = url;
-      a.download = nomFichier;
-      document.body.appendChild(a);
-      a.click();
-      a.remove();
-      URL.revokeObjectURL(url);
-      msgEl.textContent = `${nomFichier} généré ! Placez-le dans le dossier du site.`;
-    }
-
-    // ================= ÉVÉNEMENTS =================
-    let stateEvents = (typeof events !== "undefined" && Array.isArray(events))
-      ? events.map(e => ({ ...e }))
-      : [];
-
-    const listeEventsEl = document.getElementById("liste-events");
-    const msgEventsEl = document.getElementById("msg-events");
-
-    function estMessageSeul(ev) {
-      return Boolean(ev && ev.message && !ev.date && !ev.lieu && !ev.desc);
-    }
-
-    function renduEvents() {
-      if (!stateEvents.length) {
-        listeEventsEl.innerHTML = '<p class="vide">Aucun événement enregistré.</p>';
-        return;
-      }
-      listeEventsEl.innerHTML = "";
-      stateEvents.forEach((ev, i) => {
-        const div = document.createElement("div");
-        div.className = "ligne";
-        const resume = estMessageSeul(ev)
-          ? `<em>${ev.message}</em>`
-          : `<strong>${ev.date || ""}</strong> – ${ev.lieu || ""}<br><em>${ev.desc || ""}</em>`;
-        div.innerHTML = `<div>${resume}</div>`;
-
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "btn-suppr";
-        btn.textContent = "Supprimer";
-        btn.addEventListener("click", () => {
-          stateEvents.splice(i, 1);
-          renduEvents();
-          msgEventsEl.textContent = "Supprimé (pensez à enregistrer).";
-        });
-        div.appendChild(btn);
-        listeEventsEl.appendChild(div);
-      });
-    }
-
-    document.getElementById("form-event").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const date = document.getElementById("ev-date").value.trim();
-      const lieu = document.getElementById("ev-lieu").value.trim();
-      const desc = document.getElementById("ev-desc").value.trim();
-      const message = document.getElementById("ev-message").value.trim();
-      const lylo = document.getElementById("ev-lylo").value.trim();
-      const infoconcert = document.getElementById("ev-infoconcert").value.trim();
-
-      let item;
-      if (message && !date && !lieu && !desc) {
-        item = { message };
-      } else {
-        if (!date || !lieu || !desc) {
-          alert("Renseignez soit un 'Message seul', soit la date, le lieu et la description.");
-          return;
-        }
-        item = { date, lieu, desc };
-        if (message) item.message = message;
-        if (lylo) item.lylo = lylo;
-        if (infoconcert) item.infoconcert = infoconcert;
-      }
-
-      stateEvents.push(item);
-      renduEvents();
-      e.target.reset();
-      msgEventsEl.textContent = "Ajouté (pensez à enregistrer).";
+      telechargementClassique(contenu);
     });
 
-    document.getElementById("btn-save-events").addEventListener("click", () => {
-      const contenu = "const events = " + JSON.stringify(stateEvents, null, 4) + ";\n";
-      enregistrerFichierJs("evenements-data.js", contenu, msgEventsEl);
-    });
-
-    // ================= VIDÉOS YOUTUBE =================
-    const albumsExistants = (typeof galerieAlbums !== "undefined" && Array.isArray(galerieAlbums))
-      ? galerieAlbums
-      : [];
-
-    let stateVideos = (typeof youtubeVideos !== "undefined" && Array.isArray(youtubeVideos))
-      ? youtubeVideos.map(v => ({ ...v }))
-      : [];
-
-    const listeVideosEl = document.getElementById("liste-videos");
-    const msgVideosEl = document.getElementById("msg-videos");
-
-    function extraireIdYoutube(valeur) {
-      const v = valeur.trim();
-      const matchShort = v.match(/youtu\.be\/([a-zA-Z0-9_-]{6,})/);
-      if (matchShort) return matchShort[1];
-      const matchLong = v.match(/[?&]v=([a-zA-Z0-9_-]{6,})/);
-      if (matchLong) return matchLong[1];
-      return v;
-    }
-
-    document.getElementById("form-video").addEventListener("submit", (e) => {
-      e.preventDefault();
-      const rawId = document.getElementById("vid-id").value;
-      const titre = document.getElementById("vid-titre").value.trim();
-      const id = extraireIdYoutube(rawId);
-      if (!id || !titre) return;
-
-      stateVideos.push({ id, titre });
-      renduVideos();
-      e.target.reset();
-      msgVideosEl.textContent = "Vidéo ajoutée (pensez à enregistrer galerie-data.js).";
-    });
-
-    function renduVideos() {
-      if (!stateVideos.length) {
-        listeVideosEl.innerHTML = '<p class="vide">Aucune vidéo enregistrée.</p>';
-        return;
-      }
-      listeVideosEl.innerHTML = "";
-      stateVideos.forEach((vid, vIdx) => {
-        const div = document.createElement("div");
-        div.className = "ligne";
-        div.innerHTML = `<div><strong>${vid.titre}</strong> <span style="color:#9c9cb4;font-size:0.85rem;">(ID : ${vid.id})</span></div>`;
-        const btn = document.createElement("button");
-        btn.type = "button";
-        btn.className = "btn-suppr";
-        btn.textContent = "Supprimer";
-        btn.addEventListener("click", () => {
-          stateVideos.splice(vIdx, 1);
-          renduVideos();
-          msgVideosEl.textContent = "Vidéo supprimée (pensez à enregistrer).";
-        });
-        div.appendChild(btn);
-        listeVideosEl.appendChild(div);
-      });
-    }
-
-    document.getElementById("btn-save-videos").addEventListener("click", () => {
-      const albumsStr = JSON.stringify(albumsExistants, null, 4);
-      const videosStr = JSON.stringify(stateVideos, null, 4);
-      const contenu =
-        `const galerieAlbums = ${albumsStr};\n\n\n` +
-        `const youtubeVideos = ${videosStr};\n`;
-      enregistrerFichierJs("galerie-data.js", contenu, msgVideosEl);
-    });
-
-    renduEvents();
-    renduVideos();
+    afficherListe();
   </script>
 </body>
 </html>

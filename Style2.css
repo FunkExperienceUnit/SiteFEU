@@ -554,6 +554,20 @@ form button {
     margin-top: 30px;
 }
 
+.social img.social-logo {
+        height: 34px;
+        width: auto;
+        object-fit: contain;
+        border-radius: 6px;
+        filter: brightness(0.92);
+        transition: transform 0.3s ease, filter 0.3s ease, box-shadow 0.3s ease;
+    }
+
+    .social a:hover img.social-logo {
+        transform: scale(1.15);
+        filter: brightness(1) drop-shadow(0 0 10px rgba(255, 209, 102, 0.55));
+    }
+
     .social a {
         color: #d1d1e0;
         font-size: 2.2rem;

@@ -1,24 +1,52 @@
+
+
 const list = document.getElementById("event-list");
 if (list) {
-    events.forEach(ev => {
+    list.innerHTML = "";
+
+    const listeEvents = (typeof events !== "undefined" && Array.isArray(events)) ? events : [];
+
+    if (listeEvents.length === 0) {
         const li = document.createElement("li");
-
-        let htmlContent = `<strong>${ev.date}</strong> – ${ev.lieu}<br><em>${ev.desc}</em>`;
-
-        if (ev.lylo || ev.infoconcert) {
-            htmlContent += `<div class="event-item-links">`;
-            if (ev.lylo) {
-                htmlContent += `<a href="${ev.lylo}" target="_blank" rel="noopener noreferrer" aria-label="Lylo"><img src="img/Logo/lylo.png" alt="Lylo" class="event-partner-logo" loading="lazy" decoding="async"></a>`;
-            }
-            if (ev.infoconcert) {
-                htmlContent += `<a href="${ev.infoconcert}" target="_blank" rel="noopener noreferrer" aria-label="Info Concert"><img src="img/Logo/infoConcert.png" alt="Info Concert" class="event-partner-logo" loading="lazy" decoding="async"></a>`;
-            }
-            htmlContent += `</div>`;
-        }
-
-        li.innerHTML = htmlContent;
+        li.innerHTML = `<em>${messageSansEvenement}</em>`;
         list.appendChild(li);
-    });
+    } else {
+        listeEvents.forEach(ev => {
+            const li = document.createElement("li");
+
+            let htmlContent = "";
+
+            if (ev.message && !ev.date && !ev.lieu && !ev.desc) {
+                htmlContent = `<em>${ev.message}</em>`;
+            } else {
+                const parties = [];
+                if (ev.date) parties.push(`<strong>${ev.date}</strong>`);
+                if (ev.lieu) parties.push(ev.lieu);
+                htmlContent = parties.join(" – ");
+
+                if (ev.desc) {
+                    htmlContent += (htmlContent ? "<br>" : "") + `<em>${ev.desc}</em>`;
+                }
+                if (ev.message) {
+                    htmlContent += (htmlContent ? "<br>" : "") + `<em>${ev.message}</em>`;
+                }
+            }
+
+            if (ev.lylo || ev.infoconcert) {
+                htmlContent += `<div class="event-item-links">`;
+                if (ev.lylo) {
+                    htmlContent += `<a href="${ev.lylo}" target="_blank" rel="noopener noreferrer" aria-label="Lylo"><img src="img/Logo/lylo.png" alt="Lylo" class="event-partner-logo" loading="lazy" decoding="async"></a>`;
+                }
+                if (ev.infoconcert) {
+                    htmlContent += `<a href="${ev.infoconcert}" target="_blank" rel="noopener noreferrer" aria-label="Info Concert"><img src="img/Logo/infoConcert.png" alt="Info Concert" class="event-partner-logo" loading="lazy" decoding="async"></a>`;
+                }
+                htmlContent += `</div>`;
+            }
+
+            li.innerHTML = htmlContent;
+            list.appendChild(li);
+        });
+    }
 }
 
 const videoContainer = document.getElementById("dynamic-videos");
