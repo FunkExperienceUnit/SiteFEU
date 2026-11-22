@@ -2,7 +2,7 @@
 <html lang="fr">
 <head>
   <meta charset="UTF-8">
-  <title>Éditeur de métadonnées — Galerie</title>
+  <title>Éditeur Galerie &amp; Vidéos YouTube</title>
   <meta name="viewport" content="width=device-width, initial-scale=1.0">
   <style>
     * { box-sizing: border-box; }
@@ -27,6 +27,11 @@
     h2 {
       color: #ffffff;
       font-size: 1.15rem;
+      margin: 0 0 12px 0;
+    }
+    h3 {
+      color: #ffd166;
+      font-size: 1rem;
       margin: 0 0 6px 0;
     }
     .carte {
@@ -76,17 +81,78 @@
       outline: none;
       border-color: #ffd166;
     }
+    button {
+      border: none;
+      border-radius: 8px;
+      padding: 10px 15px;
+      font-size: 0.9rem;
+      font-weight: 700;
+      cursor: pointer;
+    }
+    .btn-ajouter {
+      background: #ffd166;
+      color: #0b0b10;
+    }
+    .btn-mini {
+      background: #222234;
+      color: #e0e0f0;
+      border: 1px solid rgba(255, 255, 255, 0.12);
+      padding: 6px 10px;
+      font-size: 0.82rem;
+    }
+    .btn-mini:hover {
+      border-color: #ffd166;
+      color: #ffd166;
+    }
+    .btn-supprimer {
+      background: #2e181e;
+      color: #ff8a93;
+      border: 1px solid rgba(255, 94, 98, 0.35);
+      padding: 6px 11px;
+      font-size: 0.82rem;
+    }
+    .btn-supprimer:hover {
+      background: #ff5e62;
+      color: #ffffff;
+    }
     .btn-enregistrer {
       background: linear-gradient(135deg, #ff5e62 0%, #ff9966 100%);
       color: #ffffff;
-      border: none;
-      border-radius: 8px;
       margin-top: 8px;
       width: 100%;
       padding: 13px;
       font-size: 1rem;
-      font-weight: 700;
-      cursor: pointer;
+    }
+    .video-item {
+      border-top: 1px solid rgba(255, 255, 255, 0.08);
+      padding-top: 16px;
+      margin-top: 16px;
+    }
+    .video-item:first-child {
+      border-top: none;
+      padding-top: 0;
+      margin-top: 0;
+    }
+    .video-top {
+      display: flex;
+      gap: 14px;
+      align-items: center;
+      margin-bottom: 10px;
+    }
+    .video-thumb {
+      width: 104px;
+      height: 58px;
+      object-fit: cover;
+      border-radius: 6px;
+      background: #0b0b10;
+      border: 1px solid rgba(255, 255, 255, 0.1);
+      flex-shrink: 0;
+    }
+    .video-actions {
+      display: flex;
+      gap: 8px;
+      flex-wrap: wrap;
+      margin-top: 6px;
     }
     .message {
       margin-top: 12px;
@@ -101,16 +167,36 @@
   </style>
 </head>
 <body>
-  <h1>Métadonnées de la galerie</h1>
+  <h1>Métadonnées Galerie &amp; Vidéos YouTube</h1>
   <p class="sous-titre">
-    Modifiez le titre court et le contexte de chaque album. Les chemins de dossiers et la liste des photos restent intacts.
+    Éditez les titres/contextes/couvertures des albums et gérez la liste des vidéos YouTube dans <code>galerie-data.js</code>.
   </p>
 
   <div id="liste-albums"></div>
 
   <div class="carte">
+    <h2>Ajouter une vidéo YouTube</h2>
+    <form id="form-video">
+      <label>
+        ID ou lien YouTube (ex. <code>MwhbsUXIsfo</code> ou <code>https://youtu.be/...</code>)
+        <input type="text" id="video-input" placeholder="ex. MwhbsUXIsfo ou https://www.youtube.com/watch?v=..." required>
+      </label>
+      <label>
+        Titre de la vidéo
+        <input type="text" id="video-titre" placeholder="ex. Stayin Alive LIVE 2026" required>
+      </label>
+      <button type="submit" class="btn-ajouter">Ajouter la vidéo</button>
+    </form>
+  </div>
+
+  <div class="carte">
+    <h2>Vidéos YouTube enregistrées</h2>
+    <div id="liste-videos"></div>
+  </div>
+
+  <div class="carte">
     <button type="button" id="btn-enregistrer" class="btn-enregistrer">
-      Enregistrer le fichier JS généré
+      Enregistrer galerie-data.js
     </button>
     <div id="message" class="message"></div>
   </div>
@@ -127,20 +213,38 @@
         }))
       : [];
 
-    const videosSource = (typeof youtubeVideos !== "undefined" && Array.isArray(youtubeVideos))
-      ? youtubeVideos
+    let videosListe = (typeof youtubeVideos !== "undefined" && Array.isArray(youtubeVideos))
+      ? youtubeVideos.map(v => ({
+          id: String(v.id || "").trim(),
+          titre: String(v.titre || "").trim()
+        }))
       : [];
 
-    const listeEl = document.getElementById("liste-albums");
+    const listeAlbumsEl = document.getElementById("liste-albums");
+    const listeVideosEl = document.getElementById("liste-videos");
     const messageEl = document.getElementById("message");
+
+    function extraireIdYoutube(valeur) {
+      const txt = (valeur || "").trim();
+      if (!txt) return "";
+
+      // Si c'est déjà un ID YouTube standard (11 caractères)
+      if (/^[a-zA-Z0-9_-]{11}$/.test(txt)) {
+        return txt;
+      }
+
+      // Tente d'extraire depuis une URL YouTube (watch?v=, youtu.be/, embed/, shorts/)
+      const match = txt.match(/(?:v=|\/embed\/|\/shorts\/|youtu\.be\/)([a-zA-Z0-9_-]{11})/);
+      return match ? match[1] : txt;
+    }
 
     function afficherAlbumsEditeur() {
       if (albumsSource.length === 0) {
-        listeEl.innerHTML = '<div class="carte"><p class="vide">Aucun album trouvé dans galerie-data.js.</p></div>';
+        listeAlbumsEl.innerHTML = '<div class="carte"><p class="vide">Aucun album trouvé dans galerie-data.js.</p></div>';
         return;
       }
 
-      listeEl.innerHTML = "";
+      listeAlbumsEl.innerHTML = "";
 
       albumsSource.forEach((album, idx) => {
         const carte = document.createElement("div");
@@ -213,9 +317,133 @@
           carte.appendChild(lblCouv);
         }
 
-        listeEl.appendChild(carte);
+        listeAlbumsEl.appendChild(carte);
       });
     }
+
+    function afficherVideosEditeur() {
+      if (videosListe.length === 0) {
+        listeVideosEl.innerHTML = '<p class="vide">Aucune vidéo enregistrée.</p>';
+        return;
+      }
+
+      listeVideosEl.innerHTML = "";
+
+      videosListe.forEach((vid, idx) => {
+        const bloc = document.createElement("div");
+        bloc.className = "video-item";
+
+        const top = document.createElement("div");
+        top.className = "video-top";
+
+        const thumb = document.createElement("img");
+        thumb.className = "video-thumb";
+        thumb.src = `https://i.ytimg.com/vi/${encodeURIComponent(vid.id)}/hqdefault.jpg`;
+        thumb.alt = vid.titre || vid.id;
+
+        const titreApercu = document.createElement("div");
+        const h3 = document.createElement("h3");
+        h3.textContent = vid.titre || `Vidéo ${idx + 1}`;
+        const idTxt = document.createElement("div");
+        idTxt.className = "chemin-fixe";
+        idTxt.textContent = `ID : ${vid.id}`;
+
+        titreApercu.appendChild(h3);
+        titreApercu.appendChild(idTxt);
+        top.appendChild(thumb);
+        top.appendChild(titreApercu);
+        bloc.appendChild(top);
+
+        const lblTitre = document.createElement("label");
+        lblTitre.textContent = "Titre de la vidéo";
+        const inpTitre = document.createElement("input");
+        inpTitre.type = "text";
+        inpTitre.value = vid.titre;
+        inpTitre.addEventListener("input", () => {
+          videosListe[idx].titre = inpTitre.value;
+          h3.textContent = inpTitre.value.trim() || `Vidéo ${idx + 1}`;
+          messageEl.textContent = "Vidéo modifiée (pensez à enregistrer).";
+        });
+        lblTitre.appendChild(inpTitre);
+        bloc.appendChild(lblTitre);
+
+        const lblId = document.createElement("label");
+        lblId.textContent = "ID YouTube";
+        const inpId = document.createElement("input");
+        inpId.type = "text";
+        inpId.value = vid.id;
+        inpId.addEventListener("change", () => {
+          const cleanId = extraireIdYoutube(inpId.value);
+          videosListe[idx].id = cleanId;
+          inpId.value = cleanId;
+          idTxt.textContent = `ID : ${cleanId}`;
+          thumb.src = `https://i.ytimg.com/vi/${encodeURIComponent(cleanId)}/hqdefault.jpg`;
+          messageEl.textContent = "ID YouTube mis à jour (pensez à enregistrer).";
+        });
+        lblId.appendChild(inpId);
+        bloc.appendChild(lblId);
+
+        const actions = document.createElement("div");
+        actions.className = "video-actions";
+
+        if (idx > 0) {
+          const btnMonter = document.createElement("button");
+          btnMonter.type = "button";
+          btnMonter.className = "btn-mini";
+          btnMonter.textContent = "↑ Monter";
+          btnMonter.addEventListener("click", () => {
+            [videosListe[idx - 1], videosListe[idx]] = [videosListe[idx], videosListe[idx - 1]];
+            afficherVideosEditeur();
+            messageEl.textContent = "Ordre des vidéos mis à jour (pensez à enregistrer).";
+          });
+          actions.appendChild(btnMonter);
+        }
+
+        if (idx < videosListe.length - 1) {
+          const btnDescendre = document.createElement("button");
+          btnDescendre.type = "button";
+          btnDescendre.className = "btn-mini";
+          btnDescendre.textContent = "↓ Descendre";
+          btnDescendre.addEventListener("click", () => {
+            [videosListe[idx], videosListe[idx + 1]] = [videosListe[idx + 1], videosListe[idx]];
+            afficherVideosEditeur();
+            messageEl.textContent = "Ordre des vidéos mis à jour (pensez à enregistrer).";
+          });
+          actions.appendChild(btnDescendre);
+        }
+
+        const btnSuppr = document.createElement("button");
+        btnSuppr.type = "button";
+        btnSuppr.className = "btn-supprimer";
+        btnSuppr.textContent = "Supprimer";
+        btnSuppr.addEventListener("click", () => {
+          videosListe.splice(idx, 1);
+          afficherVideosEditeur();
+          messageEl.textContent = "Vidéo supprimée (pensez à enregistrer).";
+        });
+        actions.appendChild(btnSuppr);
+
+        bloc.appendChild(actions);
+        listeVideosEl.appendChild(bloc);
+      });
+    }
+
+    document.getElementById("form-video").addEventListener("submit", (e) => {
+      e.preventDefault();
+      const rawInput = document.getElementById("video-input").value;
+      const titre = document.getElementById("video-titre").value.trim();
+      const id = extraireIdYoutube(rawInput);
+
+      if (!id || !titre) {
+        alert("Renseignez un ID ou lien YouTube valide ainsi qu'un titre.");
+        return;
+      }
+
+      videosListe.push({ id, titre });
+      afficherVideosEditeur();
+      e.target.reset();
+      messageEl.textContent = "Vidéo ajoutée (pensez à enregistrer).";
+    });
 
     function genererContenuJs() {
       const albumsNettoyes = albumsSource.map(a => {
@@ -232,9 +460,16 @@
         return obj;
       });
 
+      const videosNettoyees = videosListe
+        .filter(v => v.id && v.id.trim())
+        .map(v => ({
+          id: v.id.trim(),
+          titre: (v.titre || "").trim() || v.id.trim()
+        }));
+
       return (
         `const galerieAlbums = ${JSON.stringify(albumsNettoyes, null, 4)};\n\n\n` +
-        `const youtubeVideos = ${JSON.stringify(videosSource, null, 4)};\n`
+        `const youtubeVideos = ${JSON.stringify(videosNettoyees, null, 4)};\n`
       );
     }
 
@@ -248,7 +483,7 @@
       lien.click();
       lien.remove();
       URL.revokeObjectURL(url);
-      messageEl.textContent = "Fichier généré ! Placez-le dans le dossier du site.";
+      messageEl.textContent = "Fichier galerie-data.js généré ! Placez-le dans le dossier du site.";
     }
 
     document.getElementById("btn-enregistrer").addEventListener("click", async () => {
@@ -266,7 +501,7 @@
           const writable = await handle.createWritable();
           await writable.write(contenu);
           await writable.close();
-          messageEl.textContent = "Fichier enregistré avec succès !";
+          messageEl.textContent = "Fichier galerie-data.js enregistré avec succès !";
           return;
         } catch (err) {
           if (err && err.name === "AbortError") {
@@ -280,6 +515,7 @@
     });
 
     afficherAlbumsEditeur();
+    afficherVideosEditeur();
   </script>
 </body>
 </html>
